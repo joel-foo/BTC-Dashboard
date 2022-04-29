@@ -1,0 +1,20 @@
+{
+  "name": "react-node-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "build": "cd client && npm install && npm run build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bitcoin-core": "^3.0.0",
+    "express": "^4.17.3"
+  },
+  "engines": {
+    "node": "17.5.0"
+  }
+}
