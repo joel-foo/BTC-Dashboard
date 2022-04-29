@@ -77,7 +77,7 @@ const IndividualBlock = () => {
   }, [isSubmitted, isNext, isPrev])
 
   if (loading) {
-    return <></>
+    return <Loading />
   }
 
   if (error.show) {

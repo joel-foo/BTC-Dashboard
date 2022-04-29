@@ -223,19 +223,19 @@ form {
   transform: translateX(270%);
 }
 
-.center-container.left .temp-block-container.left2 {
+.center-container.left .temp-block-container.left {
   animation: 0.7s ease-out leftAnimate;
 }
 
-.center-container.left .temp-block-container.left {
+.center-container.left .flip-block {
   animation: 0.7s ease-out leftAnimate2;
 }
 
-.center-container.left .flip-block {
+.center-container.left .temp-block-container.right {
   animation: 0.7s ease-out leftAnimate3;
 }
 
-.center-container.left .temp-block-container.right {
+.center-container.left .temp-block-container.right2 {
   animation: 0.7s ease-out leftAnimate4;
 }
 
@@ -275,19 +275,19 @@ form {
   }
 }
 
-.center-container.right .temp-block-container.left {
+.center-container.right .temp-block-container.left2 {
   animation: 0.7s ease-out rightAnimate;
 }
 
-.center-container.right .flip-block {
+.center-container.right .temp-block-container.left {
   animation: 0.7s ease-out rightAnimate2;
 }
 
-.center-container.right .temp-block-container.right {
+.center-container.right .flip-block {
   animation: 0.7s ease-out rightAnimate3;
 }
 
-.center-container.right .temp-block-container.right2 {
+.center-container.right .temp-block-container.right {
   animation: 0.7s ease-out rightAnimate4;
 }
 
