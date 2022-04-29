@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 process.env.UV_THREADPOOL_SIZE = 128
 
-const express = express()
+const express = require('express')
 const path = require('path')
 const Client = require('bitcoin-core')
 const fs = require('fs')
