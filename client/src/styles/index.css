@@ -223,33 +223,114 @@ form {
   transform: translateX(270%);
 }
 
-.center-container.right .flip-block {
-  transform: translateX(-135%);
-  transition: transform 0.7s ease-out;
-}
-
-.center-container.right .temp-block-container.right {
-  transform: translateX(0%);
-  transition: transform 0.7s ease-out;
-}
-
-.center-container.right .temp-block-container.right2 {
-  transform: translateX(135%);
-  transition: transform 0.7s ease-out;
-}
-
 .center-container.left .temp-block-container.left2 {
-  transform: translateX(-135%);
-  transction: transform 0.7s ease-out;
+  animation: 0.7s ease-out leftAnimate;
 }
+
 .center-container.left .temp-block-container.left {
-  transform: translateX(0%);
-  transition: transform 0.7s ease-out;
+  animation: 0.7s ease-out leftAnimate2;
 }
 
 .center-container.left .flip-block {
-  transform: translateX(135%);
-  transition: transform 0.7s ease-out;
+  animation: 0.7s ease-out leftAnimate3;
+}
+
+.center-container.left .temp-block-container.right {
+  animation: 0.7s ease-out leftAnimate4;
+}
+
+@keyframes leftAnimate {
+  0% {
+    transform: translateX(-270%);
+  }
+  100% {
+    transform: translateX(-135%);
+  }
+}
+
+@keyframes leftAnimate2 {
+  0% {
+    transform: translateX(-135%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes leftAnimate3 {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(135%);
+  }
+}
+
+@keyframes leftAnimate4 {
+  0% {
+    transform: translateX(135%);
+  }
+  100% {
+    transform: translateX(270%);
+  }
+}
+
+.center-container.right .temp-block-container.left {
+  animation: 0.7s ease-out rightAnimate;
+}
+
+.center-container.right .flip-block {
+  animation: 0.7s ease-out rightAnimate2;
+}
+
+.center-container.right .temp-block-container.right {
+  animation: 0.7s ease-out rightAnimate3;
+}
+
+.center-container.right .temp-block-container.right2 {
+  animation: 0.7s ease-out rightAnimate4;
+}
+
+@keyframes rightAnimate {
+  0% {
+    transform: translateX(-135%);
+  }
+  100% {
+    transform: translateX(-270%);
+  }
+}
+
+@keyframes rightAnimate2 {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-135%);
+  }
+}
+
+@keyframes rightAnimate3 {
+  0% {
+    transform: translateX(135%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes rightAnimate4 {
+  0% {
+    transform: translateX(270%);
+  }
+  100% {
+    transform: translateX(135%);
+  }
+}
+
+.values-container.hide,
+.keys-container.hide,
+.flip-icon.hide {
+  opacity: 0;
 }
 
 .flip-block {
@@ -275,9 +356,9 @@ form {
   position: absolute;
   right: 20px;
   top: 10px;
-  /* background-color: white; */
   height: 20px;
   width: 20px;
+  transition: 0.3s opacity ease-out;
 }
 
 .flip-block.rotate .flip-block-inner {
@@ -311,6 +392,7 @@ form {
   flex-direction: column;
   width: 290px;
   row-gap: 10px;
+  transition: 0.3s opacity ease-out;
 }
 
 .values-container {
@@ -329,12 +411,12 @@ form {
 
 .center-container {
   opacity: 1;
-  animation: 0.1s ease-out changeOpacity;
+  animation: 0.6s ease-out changeOpacity;
 }
 
 @keyframes changeOpacity {
   0% {
-    opacity: 0;
+    opacity: 0.6;
   }
   100% {
     opacity: 1;

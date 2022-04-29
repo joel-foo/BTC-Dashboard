@@ -17,6 +17,7 @@ const IndividualBlock = () => {
   const centerContainerRef = useRef<HTMLDivElement | null>(null)
   const [error, setError] = useState({ show: false, msg: '' })
   const [isRotate, setIsRotate] = useState(false)
+  const [isHide, setIsHide] = useState(false)
 
   const fetchBlockInfo = async (blockHeight: any) => {
     setLoading(true)
@@ -33,7 +34,7 @@ const IndividualBlock = () => {
 
   useEffect(() => {
     document.body.className = 'hide-overflow-y'
-  }, [])
+  }, [id])
 
   useEffect(() => {
     fetchBlockInfo(id)
@@ -46,29 +47,37 @@ const IndividualBlock = () => {
       setInput('')
     }
     if (isPrev) {
-      centerContainerRef.current!.className = 'center-container left'
       const prevBlock = parseInt(id as string) - 1
+      setIsHide(true)
+      navigate(`/blockexplorer/blockheight=${prevBlock}`)
+      fetchBlockInfo(prevBlock)
+      setIsPrev(false)
+      setIsRotate(false)
       setTimeout(() => {
-        navigate(`/blockexplorer/blockheight=${prevBlock}`)
-        fetchBlockInfo(prevBlock)
-        setIsPrev(false)
-        setIsRotate(false)
+        centerContainerRef.current!.className = 'center-container left'
       }, 690)
+      setTimeout(() => {
+        setIsHide(false)
+      }, 1500)
     }
     if (isNext) {
-      centerContainerRef.current!.className = 'center-container right'
       const nextBlock = parseInt(id as string) + 1
+      setIsHide(true)
+      navigate(`/blockexplorer/blockheight=${nextBlock}`)
+      fetchBlockInfo(nextBlock)
+      setIsNext(false)
+      setIsRotate(false)
       setTimeout(() => {
-        navigate(`/blockexplorer/blockheight=${nextBlock}`)
-        fetchBlockInfo(nextBlock)
-        setIsNext(false)
-        setIsRotate(false)
+        centerContainerRef.current!.className = 'center-container right'
       }, 690)
+      setTimeout(() => {
+        setIsHide(false)
+      }, 1500)
     }
   }, [isSubmitted, isNext, isPrev])
 
   if (loading) {
-    return <Loading />
+    return <></>
   }
 
   if (error.show) {
@@ -229,13 +238,13 @@ const IndividualBlock = () => {
       <div className={isRotate ? ' flip-block rotate' : 'flip-block'}>
         {height !== 0 && (
           <VscArrowSwap
-            className='flip-icon'
+            className={isHide ? 'flip-icon hide' : 'flip-icon'}
             onClick={() => setIsRotate(!isRotate)}
           />
         )}
         <div className='flip-block-inner'>
           <div className='flip-block-front'>
-            <div className='keys-container'>
+            <div className={isHide ? 'keys-container hide' : 'keys-container'}>
               {keysFront.map((k, i) => {
                 return (
                   <span className='block-values' key={i}>
@@ -244,7 +253,9 @@ const IndividualBlock = () => {
                 )
               })}
             </div>
-            <div className='values-container'>
+            <div
+              className={isHide ? 'values-container hide' : 'values-container'}
+            >
               {valuesFront.map((v, i) => {
                 return (
                   <span className='block-values' key={i}>

@@ -25,7 +25,7 @@ const FormLayout = () => {
     e:
       | React.MouseEvent<HTMLButtonElement>
       | React.KeyboardEvent<HTMLInputElement>
-  ) => {
+  ): void => {
     e.preventDefault()
     handleSubmit()
   }
