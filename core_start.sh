@@ -50,7 +50,3 @@ elif [[ "$OSTYPE" == 'msys'* ]]; then
   start http://localhost:3000/
 
 fi
-
-
-    
-  
