@@ -1,8 +1,6 @@
 # Your personal Bitcoin Core Dashboard
 
 # How to use:
-
-    mkdir btc-dashboard && cd btc-dashboard
     
     git clone https://github.com/joel-foo/BTC-Dashboard.git
     
