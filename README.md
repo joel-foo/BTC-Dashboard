@@ -10,6 +10,7 @@
   1) Open a text editor/notepad and add the following:
 
   -rpcuser=user
+  
   -rpcpassword=password
 
   Save the file as **bitcoin.conf**.
