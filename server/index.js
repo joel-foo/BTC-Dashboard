@@ -1,20 +1,17 @@
-#!/usr/bin/env node
-process.env.UV_THREADPOOL_SIZE = 128
-
 const express = require('express')
 const path = require('path')
 const Client = require('bitcoin-core')
 const fs = require('fs')
 
-const folder = '/home/straw/.bitcoin/wallets'
+const folder = '$HOME/.bitcoin/wallets'
 
 const app = express()
 
 const PORT = process.env.PORT || 3001
 
 const client = new Client({
-  username: 'minion',
-  password: 'minion',
+  username: 'user',
+  password: 'password',
 })
 
 const wrapAsync = (fn) => {
@@ -71,8 +68,8 @@ app.get(
       files.forEach((file) => {
         wallets.push(file)
       })
-      res.send({ wallets })
     })
+    res.send({ wallets })
   })
 )
 

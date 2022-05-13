@@ -29,10 +29,10 @@ else
   
 fi
 
-
 echo "You have bitcoin core installed!"
+
 echo "Starting bitcoin core now........."
-bitcoind -server -daemon -rpcuser=minion -rpcpassword=minion 
+bitcoind -server -daemon
 echo "Waiting for bitcoin node....This process can take a few minutes...."
 until bitcoin-cli getblockchaininfo 2>/dev/null; do
   sleep 1
