@@ -1,5 +1,9 @@
 # Your personal Bitcoin Core Dashboard
 
+# How to use:
+
+    npm i btc-dashboard
+
 # To note:
 
 - You need to run a full node in order to use this dashboard. (i.e. pruned nodes will not work)
