@@ -28,7 +28,7 @@
   
   <img width="1025" alt="Screenshot 2022-05-13 at 10 06 39 PM" src="https://user-images.githubusercontent.com/76934561/168301365-4d93cd2c-1c58-4ae6-82c5-9370eaae408b.png">
   
-  (Source: https://en.bitcoin.it/wiki/Running_Bitcoin#Command-line_arguments) 
+  (Source: https://en.bitcoin.it/wiki/Running_Bitcoin) 
 
 
   3) Copy the newly created **bitcoin.conf** file into the Bitcoin directory (or ./bitcoin for Linux). 
