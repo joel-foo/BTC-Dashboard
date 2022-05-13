@@ -2,25 +2,27 @@
 
 echo "Checking for Bitcoin Core..."
 
+displayMessage() {
+  echo "You do not have Bitcoin Core installed. Please install it at https://bitcoin.org/en/download"
+  exit 1
+}
+
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   DIR="$HOME/.bitcoin/"
   if [ ! -d "$DIR" ]; then
-    echo "You do not have Bitcoin Core installed. Please install it at ......"
-    exit 1
+    displayMessage
   fi
   
 elif [[ "$OSTYPE" == "darwin"* ]]; then
   DIR="$HOME/Library/Application Support/Bitcoin/"
   if [ ! -d "$DIR" ]; then
-    echo "You do not have Bitcoin Core installed. Please install it at ......"
-    exit 1
+    displayMessage
   fi
   
 elif [[ "$OSTYPE" == 'msys'* ]]; then
   DIR="$HOME/.bitcoin/"
   if [ ! -d "$DIR" ]; then
-    echo "You do not have Bitcoin Core installed. Please install it at ......"
-    exit 1
+    displayMessage
   fi
   
 else
