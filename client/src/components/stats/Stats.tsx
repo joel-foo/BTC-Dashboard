@@ -12,7 +12,8 @@ const Stats = () => {
 
   useResetBodyClass()
 
-  if (!blockchainInfo) {
+  //instead of !blockchainInfo only
+  if (!blockchainInfo.chainInfo || !blockchainInfo.miningInfo) {
     return <Loading />
   }
 

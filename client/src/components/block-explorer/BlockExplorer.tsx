@@ -14,12 +14,16 @@ const BlockExplorer = () => {
   const [error, setError] = useState(false)
 
   const fetchBlockInfo = async (bh: number, i: number) => {
-    const res = await fetch(`/blockinfo/${bh}`)
-    const data = await res.json()
-    setBlocksInfo((blocksInfo) => {
-      blocksInfo[i] = data
-      return blocksInfo
-    })
+    try {
+      const res = await fetch(`/blockinfo/${bh}`)
+      const data = await res.json()
+      setBlocksInfo((blocksInfo) => {
+        blocksInfo[i] = data
+        return blocksInfo
+      })
+    } catch (e) {
+      console.log(e)
+    }
   }
 
   const handleClick = (height: number) => {
