@@ -2,7 +2,12 @@
 
 # How to use:
 
-    npm i btc-dashboard
+    mkdir btc-dashboard && cd btc-dashboard
+    
+    git clone https://github.com/joel-foo/BTC-Dashboard.git
+    
+    bash core_start.sh
+   
 
 # To note:
 
