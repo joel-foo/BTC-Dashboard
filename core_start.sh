@@ -39,6 +39,13 @@ echo "Waiting for bitcoin node....This process can take a few minutes...."
 until bitcoin-cli getblockchaininfo 2>/dev/null; do
   sleep 1
 done
+
+blockchainInfo=$(bitcoin-cli getblockchaininfo)
+if [[ $blockchainInfo == *'"pruned":true'* ]]; then
+  echo "Your node is a pruned one."
+  exit 1
+fi
+
 echo "Serving up your server and dashboard now..."
 node server/index.js & cd client && npm start &
 
