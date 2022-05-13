@@ -20,7 +20,7 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
   fi
   
 elif [[ "$OSTYPE" == 'msys'* ]]; then
-  DIR="$HOME/.bitcoin/"
+  DIR='%APPDATA%\Bitcoin\'
   if [ ! -d "$DIR" ]; then
     displayMessage
   fi
