@@ -4,6 +4,8 @@
     
     git clone https://github.com/joel-foo/BTC-Dashboard.git
     
+    cd BTC-Dashboard && npm i
+    
     bash core_start.sh
   
 (If you are on Windows, you need to install git if you do not have it)
