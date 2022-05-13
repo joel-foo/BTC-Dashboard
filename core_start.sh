@@ -39,5 +39,18 @@ until bitcoin-cli getblockchaininfo 2>/dev/null; do
 done
 echo "Serving up your server and dashboard now..."
 node server/index.js & cd client && npm start &
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  xdg-open http://localhost:3000/
+  
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  open http://localhost:3000/
+  
+elif [[ "$OSTYPE" == 'msys'* ]]; then
+  start http://localhost:3000/
+
+fi
+
+
     
   
