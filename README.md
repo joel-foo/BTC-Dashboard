@@ -8,7 +8,7 @@
     
     bash core_start.sh
   
-(If you are on Windows, you need to install git and add git bash)
+(If you are on Windows, you need to install git first)
 
 # To note:
 
