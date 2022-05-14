@@ -4,7 +4,7 @@ echo "Checking for Bitcoin Core..."
 
 displayMessage() {
   echo "You do not have Bitcoin Core installed. Please install it at https://bitcoin.org/en/download"
-  exit 1
+  exit 
 }
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
