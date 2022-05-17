@@ -4,7 +4,7 @@
     
     git clone https://github.com/joel-foo/BTC-Dashboard.git
     
-    cd BTC-Dashboard && npm i
+    cd BTC-Dashboard
     
     bash core_start.sh
   
