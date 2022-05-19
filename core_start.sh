@@ -46,8 +46,7 @@ if [[ $blockchainInfo == *'"pruned":true'* ]]; then
   exit 1
 fi
 
-echo "Serving up your server and dashboard now..."
-npm run build && npm run start & cd client && npm start &
+echo "Serving up your server and dashboard now..."npm run build && npm run start & cd client && npm run build &
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   xdg-open http://localhost:3000/
