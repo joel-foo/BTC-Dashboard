@@ -11,9 +11,9 @@ interface ResponseError extends Error {
   statusCode?: number
 }
 
-app.use('/api', router)
-
 app.use(cors({ origin: true }))
+
+app.use('/api', router)
 
 // Have Node serve the files for our built React app
 app.use(express.static(path.resolve(__dirname, '../client/build')))

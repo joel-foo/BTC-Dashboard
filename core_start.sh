@@ -47,4 +47,15 @@ if [[ $blockchainInfo == *'"pruned":true'* ]]; then
 fi
 
 echo "Serving up your server and dashboard now..."
-npm i && npm run build && npm run start & cd client && npm i && npm run build && sudo npm i -g serve && serve -s build &
+npm i && npm run build && npm run start & cd client && npm i && npm run build && serve -s build &
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  xdg-open http://localhost:3000/
+
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  open http://localhost:3000/
+
+elif [[ "$OSTYPE" == "msys"* ]]; then
+  start http://localhost:3000/
+
+fi
