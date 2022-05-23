@@ -7,8 +7,9 @@
     cd BTC-Dashboard
     
     bash core_start.sh
-    
-    npx serve build
+ 
+
+The dashboard will launch on localhost:3000.
   
 (If you are on Windows, you need to install git first)
 
