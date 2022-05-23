@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express'
-const path = require('path')
 import router from './routes'
+const path = require('path')
+const cors = require('cors')
 
 const app = express()
 
@@ -12,14 +13,7 @@ interface ResponseError extends Error {
 
 app.use('/api', router)
 
-app.use(function (req: Request, res: Response, next: NextFunction) {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  )
-  next()
-})
+app.use(cors({ origin: true }))
 
 // Have Node serve the files for our built React app
 app.use(express.static(path.resolve(__dirname, '../client/build')))
