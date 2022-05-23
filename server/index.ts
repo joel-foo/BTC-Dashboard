@@ -1,25 +1,16 @@
 import express, { Request, Response, NextFunction } from 'express'
 const path = require('path')
-const { createProxyMiddleware } = require('http-proxy-middleware')
 import router from './routes'
 
 const app = express()
 
 const PORT = process.env.PORT || 3001
 
-// const router = express.Router()
-
-app.use('/api', router)
-
-const apiProxy = createProxyMiddleware('/api', {
-  target: 'http://localhost:3001',
-})
-
-app.use(apiProxy)
-
 interface ResponseError extends Error {
   statusCode?: number
 }
+
+app.use('/api', router)
 
 // Have Node serve the files for our built React app
 app.use(express.static(path.resolve(__dirname, '../client/build')))
