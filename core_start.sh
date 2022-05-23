@@ -31,31 +31,48 @@ else
   
 fi
 
-echo "You have bitcoin core installed!"
+# Check if bitcoin core is already running. Stop it and re-run with server and daemon. 
 
 echo "Starting bitcoin core now........."
+
+blockchainInfo=$(bitcoin-cli getblockchaininfo) 2>/dev/null
+
+if [[ $blockchainInfo != *'Could not connect'* ]]; then
+  bitcoin-cli stop 
+  sleep 5
+fi
+
 bitcoind -server -daemon
+
 echo "Waiting for bitcoin node....This process can take a few minutes...."
-until bitcoin-cli getblockchaininfo 2>/dev/null; do
+
+until $blockchainInfo; do
+  # Check if rpc credentials are configured correctly
+  if [[ $blockchaininfo == *'Could not locate RPC credentials'* ]]; then
+    echo "Please configure your rpcuser and rpcpassword credentials in bitcoin.conf first!"
+    exit 1
+  fi
   sleep 1
 done
 
-blockchainInfo=$(bitcoin-cli getblockchaininfo)
 if [[ $blockchainInfo == *'"pruned":true'* ]]; then
   echo "Your node is a pruned one."
   exit 1
 fi
 
-echo "Serving up your server and dashboard now..."
-npm i && npm run build && npm run start & cd client && npm i && npm run build && serve -s build &
+echo "Building your dashboard now..."
+# Build server
+npm i 2>/dev/null && npm run build 2>/dev/null && npm run start 2>/dev/null & 
 
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  xdg-open http://localhost:3000/
+# Build client
+until cd client && npm i 2>/dev/null && npm run build 2>/dev/null && serve -s build; do
+  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    xdg-open http://localhost:3000/
 
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-  open http://localhost:3000/
+  elif [[ "$OSTYPE" == "darwin"* ]]; then
+    open http://localhost:3000/
 
-elif [[ "$OSTYPE" == "msys"* ]]; then
-  start http://localhost:3000/
-
-fi
+  elif [[ "$OSTYPE" == "msys"* ]]; then
+    start http://localhost:3000/
+  fi
+  done &
