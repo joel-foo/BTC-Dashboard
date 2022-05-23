@@ -43,9 +43,9 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const [isSubmitted, setIsSubmitted] = useState(defaultState.isSubmitted)
 
   async function fetchData() {
-    const res = await fetch('/api/getblockchaininfo')
+    const res = await fetch('http://localhost:3001/api/getblockchaininfo')
     const data = await res.json()
-    const res2 = await fetch('/api/getmininginfo')
+    const res2 = await fetch('http://localhost:3001/api/getmininginfo')
     const data2 = await res2.json()
     setBlockchainInfo({
       chainInfo: data.chainInfo,

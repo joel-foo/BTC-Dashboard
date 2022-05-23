@@ -21,7 +21,9 @@ const IndividualBlock = () => {
 
   const fetchBlockInfo = async (blockHeight: any) => {
     setLoading(true)
-    const res = await fetch(`/api/blockinfo/${blockHeight}`)
+    const res = await fetch(
+      `http://localhost:3001/api/blockinfo/${blockHeight}`
+    )
     const data = await res.json()
     if (res.status === 404) {
       setError({ show: true, msg: data.msg })

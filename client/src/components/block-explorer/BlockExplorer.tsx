@@ -15,7 +15,7 @@ const BlockExplorer = () => {
 
   const fetchBlockInfo = async (bh: number, i: number) => {
     try {
-      const res = await fetch(`/api/blockinfo/${bh}`)
+      const res = await fetch(`http://localhost:3001/api/blockinfo/${bh}`)
       const data = await res.json()
       setBlocksInfo((blocksInfo) => {
         blocksInfo[i] = data
