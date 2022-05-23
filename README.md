@@ -1,16 +1,15 @@
 # Your personal Bitcoin Core Dashboard
 
-# How to use:
+# Installing from source (requires git):
     
     git clone https://github.com/joel-foo/BTC-Dashboard.git
     
     cd BTC-Dashboard
     
     bash core_start.sh
-    
-    npx serve build
-  
-(If you are on Windows, you need to install git first)
+ 
+
+The dashboard will launch on localhost:3000.
 
 # To note:
 
