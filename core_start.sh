@@ -47,4 +47,4 @@ if [[ $blockchainInfo == *'"pruned":true'* ]]; then
 fi
 
 echo "Serving up your server and dashboard now..."
-npm i && npm run build && npm run start & cd client && npm i && npm run build && npm i -g serve && serve -s build &
+npm i && npm run build && npm run start & cd client && npm i && npm run build && sudo npm i -g serve && serve -s build &
