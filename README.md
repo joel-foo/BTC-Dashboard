@@ -7,6 +7,8 @@
     cd BTC-Dashboard
     
     bash core_start.sh
+    
+    npx serve build
   
 (If you are on Windows, you need to install git first)
 
