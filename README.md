@@ -12,14 +12,11 @@
 
 Prerequisities:
 
+- Bitcoin full node
 - Git
 - NodeJS
 
 The dashboard will launch on localhost:3000.
-
-# To note:
-
-- You need to run a full node in order to use this dashboard. (i.e. pruned nodes will not work)
 
 # If you have not configured bitcoin.conf (or have no idea what this means):
 
