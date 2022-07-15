@@ -46,6 +46,8 @@ bitcoind -server -daemon
 
 echo "Waiting for bitcoin node....This process can take a few minutes...."
 
+blockchainInfo=$(bitcoin-cli getblockchaininfo) 2>/dev/null
+
 until $blockchainInfo
 do
   if [[ $blockchaininfo == *'Could not locate RPC credentials'* ]]; then
@@ -66,7 +68,7 @@ echo "Building your dashboard now..."
 (npm i; npm run build; npm run start) &>/dev/null 2>&1
 
 # Build client
-(cd client; npm i; npm run build; serve -s build; xdg-open http://localhost:3000/) &>/dev/null 2>&1; 
+(cd client; npm i; npm run build; serve -s build; xdg-open http://localhost:3000/) &>/dev/null 2>&1 
 # do
 #   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 #     xdg-open http://localhost:3000/
