@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+kill -9 $(lsof -i:3000 -t)
+kill -9 $(lsof -i:3001 -t)
 
 echo "Checking for Bitcoin Core..."
 
