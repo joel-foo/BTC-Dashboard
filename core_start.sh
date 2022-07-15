@@ -34,11 +34,11 @@ fi
 
 echo "Starting bitcoin core now........."
 
-blockchainInfo=$(bitcoin-cli getblockchaininfo) 2>/dev/null
+blockchainInfo=$(bitcoin-cli getblockchaininfo) &>/dev/null 2>&1
 
 if [[ $blockchainInfo != *'Could not connect'* ]]; then
   echo "Stopping current instance of Bitcoin Core and initating reconnection in 10 seconds..."
-  bitcoin-cli stop 
+  bitcoin-cli stop >/dev/null 2>&1
   sleep 10
 fi
 
@@ -46,17 +46,17 @@ bitcoind -server -daemon
 
 echo "Waiting for bitcoin node....This process can take a few minutes...."
 
-blockchainInfo=$(bitcoin-cli getblockchaininfo) 2>/dev/null
-
-until $blockchainInfo
+until bitcoin-cli getblockchaininfo >/dev/null 2>&1
 do
-  if [[ $blockchaininfo == *'Could not locate RPC credentials'* ]]; then
+  blockchainInfo=$(bitcoin-cli getblockchaininfo) >/dev/null 2>&1
+  if [[ $blockchainInfo == *'Could not locate RPC credentials'* ]]; then
     echo "Please configure your rpcuser and rpcpassword credentials in bitcoin.conf first."
     exit 1
   fi
   sleep 1
 done
 
+blockchainInfo=$(bitcoin-cli getblockchaininfo) >/dev/null 2>&1
 if [[ $blockchainInfo == *'"pruned":true'* ]]; then
   echo "Your node is a pruned one."
   exit 1
@@ -68,7 +68,7 @@ echo "Building your dashboard now..."
 (npm i; npm run build; npm run start) &>/dev/null 2>&1
 
 # Build client
-(cd client; npm i; npm run build; serve -s build; xdg-open http://localhost:3000/) &>/dev/null 2>&1 
+(cd client; npm i; npm run build; serve -s build) &>/dev/null 2>&1 && { echo "Completed!"; xdg-open http://localhost:3000/}
 # do
 #   if [[ "$OSTYPE" == "linux-gnu"* ]]; then
 #     xdg-open http://localhost:3000/
