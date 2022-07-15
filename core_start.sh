@@ -11,7 +11,6 @@ check(){
   if [$? != 0 ]; then
     echo "You have Bitcoin Core installed but have not added bitcoind to your path variables."
     exit 1
-  fi
 }
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
@@ -46,8 +45,8 @@ bitcoind -server -daemon
 
 echo "Waiting for bitcoin node....This process can take a few minutes...."
 
-until $blockchainInfo; do
-  # Check if rpc credentials are configured correctly
+until $blockchainInfo
+do
   if [[ $blockchaininfo == *'Could not locate RPC credentials'* ]]; then
     echo "Please configure your rpcuser and rpcpassword credentials in bitcoin.conf first."
     exit 1
