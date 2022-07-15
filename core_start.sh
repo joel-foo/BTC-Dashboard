@@ -11,6 +11,7 @@ check(){
   if [$? != 0 ]; then
     echo "You have Bitcoin Core installed but have not added bitcoind to your path variables."
     exit 1
+  fi
 }
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
