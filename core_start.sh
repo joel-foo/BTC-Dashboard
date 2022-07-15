@@ -62,7 +62,7 @@ fi
 echo "Building your dashboard now..."
 
 # Build server
-(npm i; npm run build; npm run start) & >/dev/null 2>&1
+(npm i; npm run build; npm run start) &>/dev/null 2>&1
 
 # Build client
 (cd client; npm i; npm run build; serve -s build; xdg-open http://localhost:3000/) &>/dev/null 2>&1; 
