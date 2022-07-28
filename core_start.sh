@@ -54,7 +54,7 @@ bitcoind -server -daemon -datadir=$datadir
 
 echo "Waiting for bitcoin node....This process can take a few minutes...."
 
-until blockchainInfo
+until bitcoin-cli -datadir=$datadir getblockchaininfo >/dev/null 2>&1
 do
   if [[ $blockchainInfo == *'Could not locate RPC credentials'* ]]; then
     echo "Please configure your rpcuser and rpcpassword credentials in bitcoin.conf first."
@@ -72,4 +72,4 @@ fi
 echo "Building your dashboard now..."
 
 # Build server then client
-(git clone https://github.com/joel-foo/nakamoto-node.git; cd nakamoto-node; echo -e "RPC_USER=user\nRPC_PASSWORD=password" >> .env; npm i; npm run build; nohup npm run start >/dev/null 2>&1 &); (cd client; npm i; npm run build; nohup serve -s build -p 8080 >/dev/null 2>&1 &); xdg-open 'http://localhost:8080'
+(git clone https://github.com/joel-foo/nakamoto-node.git; cd nakamoto-node; echo -e "RPC_USER=user\nRPC_PASSWORD=password" >> .env; npm i; npm run build; nohup npm run start >/dev/null 2>&1 &); echo "Done building server!" (cd client; npm i; npm run build; nohup serve -s build -p 8080 >/dev/null 2>&1 &); echo "Done building dashboard!"; xdg-open 'http://localhost:8080'

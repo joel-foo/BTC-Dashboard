@@ -5,7 +5,6 @@ import moment from 'moment'
 import { VscArrowSwap } from 'react-icons/vsc'
 import Loading from '../pages/Loading'
 import { fetchIndividualBlock } from '../../fetchIndividualBlock'
-fetchIndividualBlock
 
 const IndividualBlock = () => {
   const { id } = useParams()
