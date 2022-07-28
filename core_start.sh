@@ -72,4 +72,4 @@ fi
 echo "Building your dashboard now..."
 
 # Build server then client
-(git clone https://github.com/joel-foo/nakamoto-node.git; cd nakamoto-node; echo -e "RPC_USER=user\nRPC_PASSWORD=password" >> .env; npm i; npm run build; nohup npm run start >/dev/null 2>&1 &); echo "Done building server!" (cd client; npm i; npm run build; nohup serve -s build -p 8080 >/dev/null 2>&1 &); echo "Done building dashboard!"; xdg-open 'http://localhost:8080'
+(git clone https://github.com/joel-foo/nakamoto-node.git; cd nakamoto-node; echo -e "RPC_USER=user\nRPC_PASSWORD=password" >> .env; npm i; npm run build; nohup npm run start >/dev/null 2>&1 &); echo "Done building server!"; (npm i; npm run build; nohup serve -s build -p 8080 >/dev/null 2>&1 &); echo "Done building dashboard!"; xdg-open 'http://localhost:8080'
