@@ -32,6 +32,16 @@ Prerequisities:
 
 Save the file as **bitcoin.conf**.
 
+Sample bitcoin.conf:
+server=1
+listen=1
+rpcuser=user
+rpcpassword=password
+txindex=1
+datadir=/mnt/bitcoin
+zmqpubrawblock=tcp://127.0.0.1:28332
+zmqpubrawtx=tcp://127.0.0.1:28333
+
 2. Depending on your OS, navigate to the respective default Bitcoin directory as follows:
 
   <img width="1025" alt="Screenshot 2022-05-13 at 10 06 39 PM" src="https://user-images.githubusercontent.com/76934561/168301365-4d93cd2c-1c58-4ae6-82c5-9370eaae408b.png">
