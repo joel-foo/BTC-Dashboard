@@ -12,14 +12,18 @@ const Stats = () => {
 
   useResetBodyClass()
 
-  //instead of !blockchainInfo only
-  if (!blockchainInfo.chainInfo || !blockchainInfo.miningInfo) {
+  if (!blockchainInfo) {
     return <Loading />
   }
 
-  const { blocks, headers, bestblockhash, difficulty } =
-    blockchainInfo.chainInfo
-  const { networkhashps, pooledtx } = blockchainInfo.miningInfo
+  const {
+    blocks,
+    headers,
+    bestblockhash,
+    difficulty,
+    networkhashps,
+    pooledtx,
+  } = blockchainInfo
 
   return (
     <main>
@@ -43,11 +47,11 @@ const Stats = () => {
         </div> */}
         <div className='card'>
           <p className='card-title'>
-            Current Difficulty: {convertNum(difficulty)[0]} x 10
-            <sup>{convertNum(difficulty)[1]}</sup>
+            Current Difficulty: {convertNum(difficulty as string)[0]} x 10
+            <sup>{convertNum(difficulty as string)[1]}</sup>
             <br />
-            Hash Rate: {convertNum(networkhashps)[0]} x 10
-            <sup>{convertNum(networkhashps)[1]}</sup> H/s
+            Hash Rate: {convertNum(networkhashps as string)[0]} x 10
+            <sup>{convertNum(networkhashps as string)[1]}</sup> H/s
             <br />
             No. of transactions waiting in pool: {pooledtx}
           </p>

@@ -4,6 +4,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import moment from 'moment'
 import { VscArrowSwap } from 'react-icons/vsc'
 import Loading from '../pages/Loading'
+import { fetchIndividualBlock } from '../../fetchIndividualBlock'
+fetchIndividualBlock
 
 const IndividualBlock = () => {
   const { id } = useParams()
@@ -21,17 +23,13 @@ const IndividualBlock = () => {
 
   const fetchBlockInfo = async (blockHeight: any) => {
     setLoading(true)
-    const res = await fetch(
-      `http://localhost:3001/api/blockinfo/${blockHeight}`
-    )
-    const data = await res.json()
-    if (res.status === 404) {
-      setError({ show: true, msg: data.msg })
-      setLoading(false)
+    const { info, stats, status } = await fetchIndividualBlock(blockHeight)
+    if (status === 404) {
+      setError({ show: true, msg: 'Error!' })
     } else {
-      setBlockInfo({ block: data.block, stats: data.blockStats })
-      setLoading(false)
+      setBlockInfo({ info, stats })
     }
+    setLoading(false)
   }
 
   useEffect(() => {
@@ -104,7 +102,7 @@ const IndividualBlock = () => {
     size,
     weight,
     tx,
-  } = blockInfo.block
+  } = blockInfo.info
 
   const {
     avgfee,
@@ -300,9 +298,7 @@ const IndividualBlock = () => {
       </div>
       <div
         className='temp-block-container right'
-        onClick={() =>
-          height !== blockchainInfo.chainInfo.blocks && setIsNext(true)
-        }
+        onClick={() => height !== blockchainInfo.blocks && setIsNext(true)}
       ></div>
       <div className='temp-block-container right2'></div>
     </div>

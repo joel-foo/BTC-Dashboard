@@ -13,7 +13,7 @@ const FormLayout = () => {
       setError({ show: true, message: 'Only digits allowed' })
       return
     }
-    if (input > blockchainInfo.chainInfo.data.blocks) {
+    if (parseInt(input) > blockchainInfo.blocks) {
       setError({ show: true, message: 'Max block count exceeded' })
       return
     }

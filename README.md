@@ -1,8 +1,14 @@
 # Your personal Bitcoin Core Dashboard
 
+This dashboard uses nakamotonode (see: https://github.com/joel-foo/nakamoto-node) as its API which will run on localhost:3000.
+
+The aim is to build a block explorer based on your full node, without relying on external block explorers such as blockchain.com or blockstream.info.
+
+The dashboard itself will be available at localhost:8080.
+
 ## Installing from source :
 
-    npm i -g serve
+    npm i -g typescript serve
 
     git clone https://github.com/joel-foo/BTC-Dashboard.git
 
@@ -15,8 +21,6 @@ Prerequisities:
 - Bitcoin full node
 - Git
 - NodeJS
-
-The dashboard will launch on localhost:3000.
 
 # If you have not configured bitcoin.conf (or have no idea what this means):
 
@@ -34,4 +38,4 @@ Save the file as **bitcoin.conf**.
   
   (Source: https://en.bitcoin.it/wiki/Running_Bitcoin)
 
-3. Copy the newly created **bitcoin.conf** file into the Bitcoin directory (or ./bitcoin for Linux).
+3. Copy the newly created **bitcoin.conf** file into the Bitcoin directory.

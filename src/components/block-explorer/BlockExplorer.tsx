@@ -4,21 +4,27 @@ import Loading from '../pages/Loading'
 import moment from 'moment'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useResetBodyClass } from '../custom hooks/useResetBodyClass'
+import { fetchIndividualBlock } from '../../fetchIndividualBlock'
+
+type indivBlockInfo = {
+  info: { [key: string]: string | number; height: number; time: number }
+  stats: { [key: string]: string | number; subsidy: number }
+}
 
 const BlockExplorer = () => {
   const navigate = useNavigate()
   const { pagenum } = useParams()
   const { blockchainInfo } = useGlobalContext()
-  const [blocksInfo, setBlocksInfo] = useState<any[]>([])
+  const [blocksInfo, setBlocksInfo] = useState<indivBlockInfo[]>([])
   const [page, setPage] = useState<number | null>(null)
   const [error, setError] = useState(false)
 
   const fetchBlockInfo = async (bh: number, i: number) => {
     try {
-      const res = await fetch(`http://localhost:3001/api/blockinfo/${bh}`)
-      const data = await res.json()
+      const { info, stats } = await fetchIndividualBlock(bh)
       setBlocksInfo((blocksInfo) => {
-        blocksInfo[i] = data
+        blocksInfo[i].info = info
+        blocksInfo[i].stats = stats
         return blocksInfo
       })
     } catch (e) {
@@ -33,10 +39,10 @@ const BlockExplorer = () => {
   useResetBodyClass()
 
   useEffect(() => {
-    if (blockchainInfo.chainInfo) {
+    if (blockchainInfo) {
       if (
         !/^\d+$/.test(pagenum!) ||
-        parseInt(pagenum!) > Math.ceil(blockchainInfo.chainInfo.blocks / 50)
+        parseInt(pagenum!) > Math.ceil(blockchainInfo.blocks / 50)
       ) {
         setPage(null)
         setError(true)
@@ -50,14 +56,13 @@ const BlockExplorer = () => {
   useEffect(() => {
     if (blockchainInfo.chainInfo && page) {
       let numBlocksToRetrieve = 50
-      const maxPages = Math.ceil(blockchainInfo.chainInfo.blocks / 50)
+      const maxPages = Math.ceil(blockchainInfo.blocks / 50)
       if (page === maxPages) {
-        numBlocksToRetrieve =
-          blockchainInfo.chainInfo.blocks - 50 * (maxPages - 1) + 1
+        numBlocksToRetrieve = blockchainInfo.blocks - 50 * (maxPages - 1) + 1
       }
       const pageOffset = (page - 1) * 50
       for (let i = 0; i < numBlocksToRetrieve; i++) {
-        fetchBlockInfo(blockchainInfo.chainInfo.blocks - pageOffset - i, i)
+        fetchBlockInfo(blockchainInfo.blocks - pageOffset - i, i)
       }
     }
   }, [blockchainInfo, page])
@@ -71,14 +76,13 @@ const BlockExplorer = () => {
   }
 
   if (
-    !(blockchainInfo && blockchainInfo.chainInfo) ||
-    (page === Math.ceil(blockchainInfo.chainInfo.blocks / 50) &&
+    !blockchainInfo ||
+    (page === Math.ceil(blockchainInfo.blocks / 50) &&
       blocksInfo.length !==
-        blockchainInfo.chainInfo.blocks -
-          50 * (Math.ceil(blockchainInfo.chainInfo.blocks / 50) - 1) +
+        blockchainInfo.blocks -
+          50 * (Math.ceil(blockchainInfo.blocks / 50) - 1) +
           1) ||
-    (page !== Math.ceil(blockchainInfo.chainInfo.blocks / 50) &&
-      blocksInfo.length !== 50)
+    (page !== Math.ceil(blockchainInfo.blocks / 50) && blocksInfo.length !== 50)
   ) {
     return <Loading />
   }
@@ -89,8 +93,8 @@ const BlockExplorer = () => {
         if (!blocksInfo[i]) {
           return <div key={i}></div>
         } else {
-          const { height, hash, time, difficulty, nTx } = blocksInfo[i].block
-          const { avgfee, subsidy } = height !== 0 && blocksInfo[i].blockStats
+          const { height, hash, time, difficulty, nTx } = blocksInfo[i].info
+          const { avgfee, subsidy } = blocksInfo[i].stats //stats do not exist for block 0s
           return (
             <div className='block-exp-main-container' key={i}>
               <div className='block-exp-individual-block-container'>

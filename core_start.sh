@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-kill -9 $(lsof -i:3001 -t)
-kill -9 $(lsof -i:8000 -t)
+kill -9 $(lsof -i:3000 -t)
+kill -9 $(lsof -i:8080 -t)
 
 echo "Checking for Bitcoin Core..."
 
@@ -15,6 +15,7 @@ check(){
     exit 1
   fi
 }
+
 
 if [[ "$OSTYPE" == "linux-gnu"* ]]; then
   DIR="$HOME/.bitcoin/"
@@ -32,32 +33,37 @@ else
 check "$DIR"
 fi
 
-# Check if bitcoin core is already running. Stop it and re-run with server and daemon.
+read -p "Enter the path to your bitcoin data directory (default is $HOME/.bitcoin/): " datadir
+echo "Checking $datadir..."
+if [ ! -d $datadir ]; then
+  echo "Data directory does not exist."
+  exit 1
+fi
 
+# Check if bitcoin core is already running. Stop it and re-run with server and daemon.
 echo "Starting bitcoin core now........."
 
-blockchainInfo=$(bitcoin-cli getblockchaininfo) >/dev/null 2>&1
+blockchainInfo=$(bitcoin-cli -datadir=$datadir getblockchaininfo >/dev/null 2>&1)
 
 if [[ $blockchainInfo != *'Could not connect'* ]]; then
-  echo "Stopping current instance of Bitcoin Core and initating reconnection in 10 seconds..."
+  echo "Stopping current instance of Bitcoin Core and initating reconnection in 15 seconds..."
   sleep 15
 fi
 
-bitcoind -server -daemon
+bitcoind -server -daemon -datadir=$datadir 
 
 echo "Waiting for bitcoin node....This process can take a few minutes...."
 
-until bitcoin-cli getblockchaininfo >/dev/null 2>&1
+until blockchainInfo
 do
-  blockchainInfo=$(bitcoin-cli getblockchaininfo) >/dev/null 2>&1
   if [[ $blockchainInfo == *'Could not locate RPC credentials'* ]]; then
     echo "Please configure your rpcuser and rpcpassword credentials in bitcoin.conf first."
     exit 1
   fi
   sleep 1
+  blockchainInfo=$(bitcoin-cli getblockchaininfo >/dev/null 2>&1)
 done
 
-blockchainInfo=$(bitcoin-cli getblockchaininfo) >/dev/null 2>&1
 if [[ $blockchainInfo == *'"pruned":true'* ]]; then
   echo "Your node is a pruned one."
   exit 1
@@ -65,8 +71,5 @@ fi
 
 echo "Building your dashboard now..."
 
-# Build server
-(npm i; npm run build; npm run start)&
-
-# Build client
-(cd client; npm i; npm run build; serve -s build -p 8000)&
+# Build server then client
+(git clone https://github.com/joel-foo/nakamoto-node.git; cd nakamoto-node; npm i; npm run build; nohup npm run start >/dev/null 2>&1 &); (cd client; npm i; npm run build; nohup serve -s build -p 8080 >/dev/null 2>&1 &); xdg-open 'http://localhost:8080'
