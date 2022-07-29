@@ -50,7 +50,7 @@ const BlockExplorer = () => {
         setError(false)
       }
     }
-  }, [blockchainInfo.blocks !== 0])
+  }, [blockchainInfo.blocks !== 0, pagenum])
 
   useEffect(() => {
     if (blockchainInfo.blocks !== 0 && page) {
@@ -65,15 +65,15 @@ const BlockExplorer = () => {
       }
       setMaxPage(maxPageNum)
     }
-  }, [page])
+  }, [blockchainInfo.blocks !== 0, page])
 
   //fetch new blocks when no. of blocks change
   useEffect(() => {
-    if (blockchainInfo.blocks === 0) return
+    if (blockchainInfo.blocks === 0 || blocksInfo.length !== 20) return
     const currentHeight = blocksInfo[blocksInfo.length - 1].info.height
     const diff = blockchainInfo.blocks - currentHeight
-    for (let i = 0; i < diff; i++) {
-      fetchBlockInfo(currentHeight + i + 1, 20 - diff + i)
+    for (let i = 0, j = diff; i < diff; i++, j--) {
+      fetchBlockInfo(currentHeight + i + 1, j - 1)
     }
   }, [blockchainInfo.blocks])
 

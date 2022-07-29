@@ -4,43 +4,49 @@ kill -9 $(lsof -i:8080 -t)
 
 echo "Checking for Bitcoin Core..."
 
-check(){
-  if [ ! -d $1 ]; then
-    echo "You do not have Bitcoin Core installed. Please install it at https://bitcoin.org/en/download. Ensure you have bitcoind added to your path."
-    exit 1
-  fi
-  which bitcoind
-  if [$? != 0 ]; then
-    echo "You have Bitcoin Core installed but have not added bitcoind to your path variables."
-    exit 1
-  fi
-}
+# check(){
+#   if [ ! -d $1 ]; then
+#     echo "You do not have Bitcoin Core installed. Please install it at https://bitcoin.org/en/download. Ensure you have bitcoind added to your path."
+#     exit 1
+#   fi
+#   which bitcoind
+#   if [$? != 0 ]; then
+#     echo "You have Bitcoin Core installed but have not added bitcoind to your path variables."
+#     exit 1
+#   fi
+# }
 
 
-if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-  DIR="$HOME/.bitcoin/"
+# if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+#   DIR="$HOME/.bitcoin/"
  
-elif [[ "$OSTYPE" == "darwin"* ]]; then
-  DIR="$HOME/Library/Application Support/Bitcoin/"
+# elif [[ "$OSTYPE" == "darwin"* ]]; then
+#   DIR="$HOME/Library/Application Support/Bitcoin/"
 
-elif [[ "$OSTYPE" == 'msys'* ]]; then
-  DIR="$APPDATA/Bitcoin/"
+# elif [[ "$OSTYPE" == 'msys'* ]]; then
+#   DIR="$APPDATA/Bitcoin/"
  
-else
-  echo "$OSTYPE is not supported"
-  exit 1
+# else
+#   echo "$OSTYPE is not supported"
+#   exit 1
 
-check "$DIR"
-fi
+# check "$DIR"
+# fi
 
 read -p "Enter the path to your bitcoin data directory (default is $HOME/.bitcoin/): " datadir
 echo "Checking $datadir..."
 if [ ! -d $datadir ]; then
-  echo "Data directory does not exist."
+  echo "Data directory does not exist. Install Bitocoin Core at https://bitcoin.org/en/download."
   exit 1
 fi
 
-if [! -f ${datadir}bitcoin.conf ]; then
+which bitcoind
+if [$? != 0 ]; then
+  echo "You do not have bitcoind installed or have not added it to your path variable."
+  exit 1
+fi
+
+if [ ! -f ${datadir}bitcoin.conf ]; then
   echo "bitcoin.conf does not exist!"
   exit 1
 fi 
@@ -48,8 +54,8 @@ fi
 echo "Checking your rpc credentials..."
 user=$(awk -F"=" '$1=="rpcuser" {print $2}' ${datadir}bitcoin.conf)
 password=$(awk -F"=" '$1=="rpcpassword" {print $2}' ${datadir}bitcoin.conf)
-echo "your username is: " $user
-echo "your password is: " $password
+echo "your username is:" $user
+echo "your password is:" $password
 
 # Check if bitcoin core is already running. Stop it and re-run with server and daemon.
 echo "Starting bitcoin core now........."
