@@ -18,7 +18,7 @@ const fetchBlockInfo = async (bh: number) => {
 }
 
 const fetchBlockStats = async (bh: number) => {
-  if (bh == 0) return null
+  if (bh === 0) return null
   const res = await fetch(`http://localhost:3000/api/blockstats/${bh}`)
   const stats = await res.json()
   return stats

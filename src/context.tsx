@@ -9,6 +9,7 @@ interface ContextInterface {
     message: string | ''
   }
   isSubmitted: boolean
+  currentChainHeight: number
   setInput: (input: string) => void
   setError: (error: { show: boolean; message: string }) => void
   setIsSubmitted: (isSubmitted: boolean) => void
@@ -24,11 +25,17 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const [input, setInput] = useState('')
   const [error, setError] = useState({ show: false, message: '' })
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [currentChainHeight, setCurrentChainHeight] = useState<number>(
+    blockchainInfo.blocks
+  )
 
   async function fetchData() {
     const res = await fetch('http://localhost:3000/api/blockchaininfo')
     const data = await res.json()
     setBlockchainInfo(data)
+    setTimeout(() => {
+      setCurrentChainHeight(data.blocks)
+    }, 5000)
   }
 
   useEffect(() => {
@@ -47,6 +54,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
         setInput,
         setError,
         setIsSubmitted,
+        currentChainHeight,
       }}
     >
       {children}

@@ -15,7 +15,7 @@ type indivBlockInfo = {
 const BlockExplorer = () => {
   const navigate = useNavigate()
   const { pagenum } = useParams()
-  const { blockchainInfo } = useGlobalContext()
+  const { blockchainInfo, currentChainHeight } = useGlobalContext()
   const [blocksInfo, setBlocksInfo] = useState<indivBlockInfo[]>([])
   const [page, setPage] = useState<number | null>(null)
   const [error, setError] = useState(false)
@@ -71,7 +71,7 @@ const BlockExplorer = () => {
   //fetch new blocks when no. of blocks in the chain change
   useEffect(() => {
     if (
-      blockchainInfo.blocks === -1 ||
+      !(maxPage && page && blockchainInfo.blocks !== 1) ||
       (maxPage &&
         ((page === maxPage &&
           blocksInfo.length !==
@@ -79,12 +79,12 @@ const BlockExplorer = () => {
           (page !== maxPage && blocksInfo.length !== 20)))
     )
       return
-    const currentHeight = blocksInfo[0].info.height
-    const diff = blockchainInfo.blocks - currentHeight
+    const diff = blockchainInfo.blocks - currentChainHeight
+    console.log(diff)
     const promiseChain = []
     //starts returning the latest block first
-    for (let i = diff; i > 0; --i) {
-      const p = fetchIndividualBlock(currentHeight + i)
+    for (let i = diff, j = 20; i > 0 && j > 0; i--, j--) {
+      const p = fetchIndividualBlock(blocksInfo[0].info.height + i)
       promiseChain.push(p)
     }
     Promise.all(promiseChain).then((results) => {
@@ -110,10 +110,11 @@ const BlockExplorer = () => {
   }
 
   if (
-    maxPage &&
-    ((page === maxPage &&
-      blocksInfo.length !== blockchainInfo.blocks - 20 * (maxPage - 1) + 1) ||
-      (page !== maxPage && blocksInfo.length !== 20))
+    !(maxPage && page && blockchainInfo.blocks !== 1) ||
+    (maxPage &&
+      ((page === maxPage &&
+        blocksInfo.length !== blockchainInfo.blocks - 20 * (maxPage - 1) + 1) ||
+        (page !== maxPage && blocksInfo.length !== 20)))
   ) {
     return <Loading />
   }
