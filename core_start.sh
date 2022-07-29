@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-kill -9 $(lsof -i:3000 -t)
-kill -9 $(lsof -i:8080 -t)
+kill -9 $(lsof -i:3000 -t) >/dev/null 2>&1
+kill -9 $(lsof -i:8080 -t) >/dev/null 2>&1
 
 echo "Checking for Bitcoin Core..."
 
@@ -41,7 +41,7 @@ if [ ! -d $datadir ]; then
 fi
 
 which bitcoind
-if [$? != 0 ]; then
+if [ $? != 0 ]; then
   echo "You do not have bitcoind installed or have not added it to your path variable."
   exit 1
 fi

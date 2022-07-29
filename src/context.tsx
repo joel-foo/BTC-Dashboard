@@ -18,7 +18,7 @@ const AppContext = React.createContext<ContextInterface | ''>('')
 
 const AppProvider = ({ children }: { children: ReactNode }) => {
   const [blockchainInfo, setBlockchainInfo] = useState({
-    blocks: 0,
+    blocks: -1,
   })
   const [wallets, setWallets] = useState(null)
   const [input, setInput] = useState('')

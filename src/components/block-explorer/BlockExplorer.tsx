@@ -9,6 +9,7 @@ import { fetchIndividualBlock } from '../../fetchIndividualBlock'
 type indivBlockInfo = {
   info: { [key: string]: string | number; height: number; time: number }
   stats: { [key: string]: string | number; subsidy: number }
+  status?: 200
 }
 
 const BlockExplorer = () => {
@@ -38,7 +39,7 @@ const BlockExplorer = () => {
 
   //validate pagenum
   useEffect(() => {
-    if (blockchainInfo.blocks !== 0) {
+    if (blockchainInfo.blocks !== -1) {
       if (
         !/^\d+$/.test(pagenum!) ||
         parseInt(pagenum!) > Math.floor(blockchainInfo.blocks! / 20) + 1
@@ -50,10 +51,10 @@ const BlockExplorer = () => {
         setError(false)
       }
     }
-  }, [blockchainInfo.blocks !== 0, pagenum])
+  }, [blockchainInfo.blocks !== -1, pagenum])
 
   useEffect(() => {
-    if (blockchainInfo.blocks !== 0 && page) {
+    if (blockchainInfo.blocks !== -1 && page) {
       let numBlocksToRetrieve = 20
       const maxPageNum = Math.floor(blockchainInfo.blocks / 20) + 1
       if (page === maxPageNum) {
@@ -65,16 +66,39 @@ const BlockExplorer = () => {
       }
       setMaxPage(maxPageNum)
     }
-  }, [blockchainInfo.blocks !== 0, page])
+  }, [blockchainInfo.blocks !== -1, page])
 
-  //fetch new blocks when no. of blocks change
+  //fetch new blocks when no. of blocks in the chain change
   useEffect(() => {
-    if (blockchainInfo.blocks === 0 || blocksInfo.length !== 20) return
-    const currentHeight = blocksInfo[blocksInfo.length - 1].info.height
+    if (
+      blockchainInfo.blocks === -1 ||
+      (maxPage &&
+        ((page === maxPage &&
+          blocksInfo.length !==
+            blockchainInfo.blocks - 20 * (maxPage - 1) + 1) ||
+          (page !== maxPage && blocksInfo.length !== 20)))
+    )
+      return
+    const currentHeight = blocksInfo[0].info.height
     const diff = blockchainInfo.blocks - currentHeight
-    for (let i = 0, j = diff; i < diff; i++, j--) {
-      fetchBlockInfo(currentHeight + i + 1, j - 1)
+    const promiseChain = []
+    //starts returning the latest block first
+    for (let i = diff; i > 0; --i) {
+      const p = fetchIndividualBlock(currentHeight + i)
+      promiseChain.push(p)
     }
+    Promise.all(promiseChain).then((results) => {
+      const newResults: indivBlockInfo[] = []
+      for (const r of results) {
+        const { info, stats } = r
+        newResults.push({ info, stats })
+      }
+      setBlocksInfo((blocksInfo) => {
+        blocksInfo = newResults.concat(blocksInfo)
+        blocksInfo.splice(20, diff)
+        return blocksInfo
+      })
+    })
   }, [blockchainInfo.blocks])
 
   const getTimeDiff = (timestamp: number) => {
