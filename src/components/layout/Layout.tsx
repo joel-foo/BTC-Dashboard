@@ -15,12 +15,6 @@ const Layout = () => {
           <li>
             <Link to='/blockexplorer/page=1'>Block Explorer</Link>
           </li>
-          <li>
-            <Link to='/wallets'>Wallets</Link>
-          </li>
-          <li>
-            <Link to='/fun'>Fun!</Link>
-          </li>
         </ul>
       </nav>
       <div className='title-container'>

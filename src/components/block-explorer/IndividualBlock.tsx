@@ -153,6 +153,27 @@ const IndividualBlock = () => {
     'All Transaction Ids',
   ]
 
+  const valuesFront = [
+    height,
+    hash,
+    confirmations,
+    size,
+    weight,
+    version,
+    versionHex,
+    merkleroot,
+    moment.unix(time).format('MMMM Do YYYY, h:mm:ss a'),
+    nonce,
+    bits,
+    difficulty,
+    chainwork,
+    nTx,
+    previousblockhash,
+    nextblockhash,
+    avgfee,
+    avgfeerate,
+  ]
+
   const keysBack = [
     'Average transaction size',
     'Feerates at the 10th',
@@ -203,27 +224,6 @@ const IndividualBlock = () => {
     txs,
     utxo_increase,
     utxo_size_inc,
-  ]
-
-  const valuesFront = [
-    height,
-    hash,
-    confirmations,
-    size,
-    weight,
-    version,
-    versionHex,
-    merkleroot,
-    moment.unix(time).format('MMMM Do YYYY, h:mm:ss a'),
-    nonce,
-    bits,
-    difficulty,
-    chainwork,
-    nTx,
-    previousblockhash,
-    nextblockhash,
-    avgfee,
-    avgfeerate,
   ]
 
   return (

@@ -19,7 +19,7 @@ const App = () => {
             <Route path='page=:pagenum' element={<BlockExplorer />} />
             <Route path='blockheight=:id' element={<IndividualBlock />} />
           </Route>
-          <Route path='wallets' element={<Wallets />} />
+          {/* <Route path='wallets' element={<Wallets />} /> */}
           <Route path='*' element={<ErrorPage />} />
         </Route>
       </Routes>

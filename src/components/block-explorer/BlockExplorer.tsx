@@ -3,7 +3,7 @@ import { useGlobalContext } from '../../context'
 import Loading from '../pages/Loading'
 import moment from 'moment'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useResetBodyClass } from '../custom hooks/useResetBodyClass'
+// import { useResetBodyClass } from '../custom hooks/useResetBodyClass'
 import { fetchIndividualBlock } from '../../fetchIndividualBlock'
 
 type indivBlockInfo = {
@@ -18,12 +18,13 @@ const BlockExplorer = () => {
   const [blocksInfo, setBlocksInfo] = useState<indivBlockInfo[]>([])
   const [page, setPage] = useState<number | null>(null)
   const [error, setError] = useState(false)
+  const [maxPage, setMaxPage] = useState<number | null>()
 
   const fetchBlockInfo = async (bh: number, i: number) => {
     try {
       const { info, stats } = await fetchIndividualBlock(bh)
       setBlocksInfo((blocksInfo) => {
-        blocksInfo[i] = {info, stats}
+        blocksInfo[i] = { info, stats }
         return blocksInfo
       })
     } catch (e) {
@@ -35,13 +36,12 @@ const BlockExplorer = () => {
     navigate(`/blockexplorer/blockheight=${height}`)
   }
 
-  useResetBodyClass()
-
+  //validate pagenum
   useEffect(() => {
     if (blockchainInfo.blocks !== 0) {
       if (
         !/^\d+$/.test(pagenum!) ||
-        parseInt(pagenum!) > Math.floor(blockchainInfo.blocks / 50) + 1
+        parseInt(pagenum!) > Math.floor(blockchainInfo.blocks! / 20) + 1
       ) {
         setPage(null)
         setError(true)
@@ -50,21 +50,32 @@ const BlockExplorer = () => {
         setError(false)
       }
     }
-  }, [blockchainInfo])
+  }, [blockchainInfo.blocks !== 0])
 
   useEffect(() => {
-    if (blockchainInfo.blocks !==0 && page) {
-      let numBlocksToRetrieve = 50
-      const maxPage = Math.floor(blockchainInfo.blocks / 50) + 1
-      if (page === maxPage) {
-        numBlocksToRetrieve = blockchainInfo.blocks - 50 * (maxPage - 1) + 1
+    if (blockchainInfo.blocks !== 0 && page) {
+      let numBlocksToRetrieve = 20
+      const maxPageNum = Math.floor(blockchainInfo.blocks / 20) + 1
+      if (page === maxPageNum) {
+        numBlocksToRetrieve = blockchainInfo.blocks - 20 * (maxPageNum - 1) + 1
       }
-      const pageOffset = (page - 1) * 50
+      const pageOffset = (page - 1) * 20
       for (let i = 0; i < numBlocksToRetrieve; i++) {
         fetchBlockInfo(blockchainInfo.blocks - pageOffset - i, i)
       }
+      setMaxPage(maxPageNum)
     }
-  }, [blockchainInfo.blocks, page])
+  }, [page])
+
+  //fetch new blocks when no. of blocks change
+  useEffect(() => {
+    if (blockchainInfo.blocks === 0) return
+    const currentHeight = blocksInfo[blocksInfo.length - 1].info.height
+    const diff = blockchainInfo.blocks - currentHeight
+    for (let i = 0; i < diff; i++) {
+      fetchBlockInfo(currentHeight + i + 1, 20 - diff + i)
+    }
+  }, [blockchainInfo.blocks])
 
   const getTimeDiff = (timestamp: number) => {
     return moment.unix(timestamp).fromNow()
@@ -75,26 +86,24 @@ const BlockExplorer = () => {
   }
 
   if (
-    (page === Math.floor(blockchainInfo.blocks / 50) + 1 &&
-      blocksInfo.length !==
-        blockchainInfo.blocks -
-          50 * Math.floor(blockchainInfo.blocks / 50) +
-          1) ||
-    (page !== Math.floor(blockchainInfo.blocks / 50) + 1 && blocksInfo.length !== 50)
+    maxPage &&
+    ((page === maxPage &&
+      blocksInfo.length !== blockchainInfo.blocks - 20 * (maxPage - 1) + 1) ||
+      (page !== maxPage && blocksInfo.length !== 20))
   ) {
     return <Loading />
   }
 
   return (
     <div className='block-exp-container'>
-      {[...Array(50).keys()].map((i) => {
+      {[...Array(20).keys()].map((i) => {
         if (!blocksInfo[i]) {
           return <div key={i}></div>
         } else {
-          let avgfee, subsidy;
+          let avgfee, subsidy
           const { height, hash, time, difficulty, nTx } = blocksInfo[i].info
-          if(height !== 0){
-            avgfee = blocksInfo[i].stats['avgfee'] 
+          if (height !== 0) {
+            avgfee = blocksInfo[i].stats['avgfee']
             subsidy = blocksInfo[i].stats['subsidy']
           }
           return (
@@ -110,7 +119,7 @@ const BlockExplorer = () => {
                   <p>nTx: {nTx}</p>
                   {height !== 0 && (
                     <p>
-                      {avgfee}, {subsidy as number / Math.pow(10, 8)} BTC
+                      {avgfee}, {(subsidy as number) / Math.pow(10, 8)} BTC
                     </p>
                   )}
                 </div>
@@ -132,16 +141,20 @@ const BlockExplorer = () => {
       })}
       <div className='nav-page-container'>
         {[...Array(10).keys()].map((i) => {
+          const pagenum = page! + i
+          if (pagenum > maxPage!) {
+            return <div key={i}></div>
+          }
           return (
             <div
               className='nav-btn'
               onClick={() => {
-                navigate(`/blockexplorer/page=${i + 1}`)
+                navigate(`/blockexplorer/page=${pagenum}`)
                 navigate(0)
               }}
               key={i}
             >
-              {i + 1}
+              {pagenum}
             </div>
           )
         })}
