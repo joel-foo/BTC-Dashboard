@@ -40,6 +40,17 @@ if [ ! -d $datadir ]; then
   exit 1
 fi
 
+if [! -f ${datadir}bitcoin.conf ]; then
+  echo "bitcoin.conf does not exist!"
+  exit 1
+fi 
+
+echo "Checking your rpc credentials..."
+user=$(awk -F"=" '$1=="rpcuser" {print $2}' ${datadir}bitcoin.conf)
+password=$(awk -F"=" '$1=="rpcpassword" {print $2}' ${datadir}bitcoin.conf)
+echo "your username is: " $user
+echo "your password is: " $password
+
 # Check if bitcoin core is already running. Stop it and re-run with server and daemon.
 echo "Starting bitcoin core now........."
 
@@ -72,4 +83,4 @@ fi
 echo "Building your dashboard now..."
 
 # Build server then client
-(git clone https://github.com/joel-foo/nakamoto-node.git; cd nakamoto-node; echo -e "RPC_USER=user\nRPC_PASSWORD=password" >> .env; npm i; npm run build; nohup npm run start >/dev/null 2>&1 &); echo "Done building server!"; (npm i; npm run build; nohup serve -s build -p 8080 >/dev/null 2>&1 &); echo "Done building dashboard!"; xdg-open 'http://localhost:8080'
+(git clone https://github.com/joel-foo/nakamoto-node.git; cd nakamoto-node; echo -e "RPC_USER=$user\nRPC_PASSWORD=$password" >> .env; npm i; npm run build; nohup npm run start >/dev/null 2>&1 &); echo "Done building server!"; (npm i; npm run build; nohup serve -s build -p 8080 >/dev/null 2>&1 &); echo "Done building dashboard!"; xdg-open 'http://localhost:8080'
