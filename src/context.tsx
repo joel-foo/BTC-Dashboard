@@ -35,7 +35,7 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
     setBlockchainInfo(data)
     setTimeout(() => {
       setCurrentChainHeight(data.blocks)
-    }, 1000)
+    }, 5000)
   }
 
   useEffect(() => {

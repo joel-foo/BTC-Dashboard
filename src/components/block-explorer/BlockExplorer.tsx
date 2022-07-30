@@ -20,6 +20,7 @@ const BlockExplorer = () => {
   const [page, setPage] = useState<number | null>(null)
   const [error, setError] = useState(false)
   const [maxPage, setMaxPage] = useState<number | null>()
+  const [isUpdating, setIsUpdating] = useState(false)
 
   const fetchBlockInfo = async (bh: number, i: number) => {
     try {
@@ -71,6 +72,7 @@ const BlockExplorer = () => {
   //fetch new blocks when no. of blocks in the chain change
   useEffect(() => {
     if (
+      isUpdating ||
       !(maxPage && page) ||
       (page === maxPage &&
         blocksInfo.length !== currentChainHeight - 20 * (maxPage - 1) + 1) ||
@@ -85,6 +87,7 @@ const BlockExplorer = () => {
       const p = fetchIndividualBlock(blocksInfo[0].info.height + i)
       promiseChain.push(p)
     }
+    setIsUpdating(true)
     Promise.all(promiseChain).then((results) => {
       const newResults: indivBlockInfo[] = []
       for (const r of results) {
@@ -96,6 +99,7 @@ const BlockExplorer = () => {
         blocksInfo.splice(20, diff)
         return blocksInfo
       })
+      setIsUpdating(false)
     })
   }, [blockchainInfo.blocks])
 
