@@ -75,7 +75,7 @@ const BlockExplorer = () => {
       (maxPage &&
         ((page === maxPage &&
           blocksInfo.length !==
-            blockchainInfo.blocks - 20 * (maxPage - 1) + 1) ||
+            currentChainHeight - 20 * (maxPage - 1) + 1) ||
           (page !== maxPage && blocksInfo.length !== 20)))
     )
       return
