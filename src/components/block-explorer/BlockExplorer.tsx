@@ -3,7 +3,6 @@ import { useGlobalContext } from '../../context'
 import Loading from '../pages/Loading'
 import moment from 'moment'
 import { useNavigate, useParams } from 'react-router-dom'
-// import { useResetBodyClass } from '../custom hooks/useResetBodyClass'
 import { fetchIndividualBlock } from '../../fetchIndividualBlock'
 
 type indivBlockInfo = {
@@ -14,7 +13,8 @@ type indivBlockInfo = {
 
 const BlockExplorer = () => {
   const navigate = useNavigate()
-  const { pagenum } = useParams()
+  //pagenum will never be undefined because the react router will serve the error route if pagenum parameter is not provided
+  const { pagenum } = useParams() as { pagenum: string }
   const { blockchainInfo, currentChainHeight } = useGlobalContext()
   const [blocksInfo, setBlocksInfo] = useState<indivBlockInfo[]>([])
   const [page, setPage] = useState<number | null>(null)
@@ -39,50 +39,48 @@ const BlockExplorer = () => {
 
   //validate pagenum
   useEffect(() => {
-    if (blockchainInfo.blocks !== -1) {
-      if (
-        !/^\d+$/.test(pagenum!) ||
-        parseInt(pagenum!) > Math.floor(blockchainInfo.blocks! / 20) + 1
-      ) {
-        setPage(null)
-        setError(true)
-      } else {
-        setPage(parseInt(pagenum!))
-        setError(false)
-      }
+    //number of blocks still unknown, we can only validate pagenum if we know it
+    if (blockchainInfo.blocks === -1) return
+    if (
+      parseInt(pagenum) === 0 ||
+      !/^\d+$/.test(pagenum) ||
+      parseInt(pagenum) > Math.floor(blockchainInfo.blocks! / 20) + 1
+    ) {
+      setPage(null)
+      setError(true)
+    } else {
+      setPage(parseInt(pagenum))
+      setError(false)
     }
   }, [blockchainInfo.blocks !== -1, pagenum])
 
   useEffect(() => {
-    if (blockchainInfo.blocks !== -1 && page) {
-      let numBlocksToRetrieve = 20
-      const maxPageNum = Math.floor(blockchainInfo.blocks / 20) + 1
-      if (page === maxPageNum) {
-        numBlocksToRetrieve = blockchainInfo.blocks - 20 * (maxPageNum - 1) + 1
-      }
-      const pageOffset = (page - 1) * 20
-      for (let i = 0; i < numBlocksToRetrieve; i++) {
-        fetchBlockInfo(blockchainInfo.blocks - pageOffset - i, i)
-      }
-      setMaxPage(maxPageNum)
+    if (!page) return
+    let numBlocksToRetrieve = 20
+    const maxPageNum = Math.floor(blockchainInfo.blocks / 20) + 1
+    if (page === maxPageNum) {
+      numBlocksToRetrieve = blockchainInfo.blocks - 20 * (maxPageNum - 1) + 1
     }
-  }, [blockchainInfo.blocks !== -1, page])
+    const pageOffset = (page - 1) * 20
+    for (let i = 0; i < numBlocksToRetrieve; i++) {
+      fetchBlockInfo(blockchainInfo.blocks - pageOffset - i, i)
+    }
+    setMaxPage(maxPageNum)
+  }, [page])
 
   //fetch new blocks when no. of blocks in the chain change
   useEffect(() => {
     if (
-      !(maxPage && page && blockchainInfo.blocks !== 1) ||
-      (maxPage &&
-        ((page === maxPage &&
-          blocksInfo.length !==
-            currentChainHeight - 20 * (maxPage - 1) + 1) ||
-          (page !== maxPage && blocksInfo.length !== 20)))
+      !(maxPage && page) ||
+      (page === maxPage &&
+        blocksInfo.length !== currentChainHeight - 20 * (maxPage - 1) + 1) ||
+      (page !== maxPage && blocksInfo.length !== 20)
     )
       return
     const diff = blockchainInfo.blocks - currentChainHeight
     console.log(diff)
     const promiseChain = []
-    //starts returning the latest block first
+    //starts by returning the latest block first
     for (let i = diff, j = 20; i > 0 && j > 0; i--, j--) {
       const p = fetchIndividualBlock(blocksInfo[0].info.height + i)
       promiseChain.push(p)
@@ -110,11 +108,10 @@ const BlockExplorer = () => {
   }
 
   if (
-    !(maxPage && page && blockchainInfo.blocks !== 1) ||
-    (maxPage &&
-      ((page === maxPage &&
-        blocksInfo.length !== blockchainInfo.blocks - 20 * (maxPage - 1) + 1) ||
-        (page !== maxPage && blocksInfo.length !== 20)))
+    !(maxPage && page) ||
+    (page === maxPage &&
+      blocksInfo.length !== blockchainInfo.blocks - 20 * (maxPage - 1) + 1) ||
+    (page !== maxPage && blocksInfo.length !== 20)
   ) {
     return <Loading />
   }
