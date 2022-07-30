@@ -9,10 +9,13 @@ interface ContextInterface {
     message: string | ''
   }
   isSubmitted: boolean
+  startUpdate: boolean
   currentChainHeight: number
   setInput: (input: string) => void
   setError: (error: { show: boolean; message: string }) => void
   setIsSubmitted: (isSubmitted: boolean) => void
+  setStartUpdate: (isUpdating: boolean) => void
+  setCurrentChainHeight: (currentChainHeight: number) => void
 }
 
 const AppContext = React.createContext<ContextInterface | ''>('')
@@ -25,17 +28,20 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const [input, setInput] = useState('')
   const [error, setError] = useState({ show: false, message: '' })
   const [isSubmitted, setIsSubmitted] = useState(false)
+  //current chain height is always one tick before blockchainInfo.blocks
   const [currentChainHeight, setCurrentChainHeight] = useState<number>(
     blockchainInfo.blocks
   )
+  const [startUpdate, setStartUpdate] = useState(false)
 
   async function fetchData() {
     const res = await fetch('http://localhost:3000/api/blockchaininfo')
     const data = await res.json()
-    setBlockchainInfo(data)
-    setTimeout(() => {
-      setCurrentChainHeight(data.blocks)
-    }, 5000)
+    setBlockchainInfo((blockchainInfo) => {
+      //only set current chain height if we are not updating
+      if (!startUpdate) setCurrentChainHeight(blockchainInfo.blocks)
+      return data
+    })
   }
 
   useEffect(() => {
@@ -55,6 +61,9 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
         setError,
         setIsSubmitted,
         currentChainHeight,
+        setCurrentChainHeight,
+        startUpdate,
+        setStartUpdate,
       }}
     >
       {children}

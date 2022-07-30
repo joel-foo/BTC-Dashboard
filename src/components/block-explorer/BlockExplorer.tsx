@@ -15,7 +15,12 @@ const BlockExplorer = () => {
   const navigate = useNavigate()
   //pagenum will never be undefined because the react router will serve the error route if pagenum parameter is not provided
   const { pagenum } = useParams() as { pagenum: string }
-  const { blockchainInfo, currentChainHeight } = useGlobalContext()
+  const {
+    blockchainInfo,
+    currentChainHeight,
+    setCurrentChainHeight,
+    setStartUpdate,
+  } = useGlobalContext()
   const [blocksInfo, setBlocksInfo] = useState<indivBlockInfo[]>([])
   const [page, setPage] = useState<number | null>(null)
   const [error, setError] = useState(false)
@@ -87,6 +92,7 @@ const BlockExplorer = () => {
       const p = fetchIndividualBlock(blocksInfo[0].info.height + i)
       promiseChain.push(p)
     }
+    setStartUpdate(true)
     setIsUpdating(true)
     Promise.all(promiseChain).then((results) => {
       const newResults: indivBlockInfo[] = []
@@ -100,6 +106,7 @@ const BlockExplorer = () => {
         return blocksInfo
       })
       setIsUpdating(false)
+      setCurrentChainHeight(currentChainHeight + diff)
     })
   }, [blockchainInfo.blocks])
 
