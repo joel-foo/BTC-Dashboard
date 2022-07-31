@@ -8,7 +8,7 @@ import { fetchIndividualBlock } from '../../fetchIndividualBlock'
 type indivBlockInfo = {
   info: { [key: string]: string | number; height: number; time: number }
   stats: { [key: string]: string | number; subsidy: number }
-  status?: 200
+  status?: 200 | 404
 }
 
 const BlockExplorer = () => {
@@ -71,6 +71,7 @@ const BlockExplorer = () => {
     for (let i = 0; i < numBlocksToRetrieve; i++) {
       fetchBlockInfo(blockchainInfo.blocks - pageOffset - i, i)
     }
+    setStartUpdate(false)
     setMaxPage(maxPageNum)
   }, [page])
 
