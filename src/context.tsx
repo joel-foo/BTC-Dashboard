@@ -37,11 +37,8 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   async function fetchData() {
     const res = await fetch('http://localhost:3000/api/blockchaininfo')
     const data = await res.json()
-    setBlockchainInfo((blockchainInfo) => {
-      //only set current chain height if we are not updating
-      if (!startUpdate) setCurrentChainHeight(blockchainInfo.blocks)
-      return data
-    })
+    if (!startUpdate) setCurrentChainHeight(blockchainInfo.blocks)
+    setBlockchainInfo(data)
   }
 
   useEffect(() => {
