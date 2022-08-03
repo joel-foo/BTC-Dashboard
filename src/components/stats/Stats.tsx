@@ -1,68 +1,64 @@
-import { BiCube } from 'react-icons/bi'
 import { GiMiner } from 'react-icons/gi'
 import Loading from '../pages/Loading'
 import { useGlobalContext } from '../../context'
-import { useResetBodyClass } from '../custom hooks/useResetBodyClass'
+import { convertNum } from '../../helpers'
+import moment from 'moment'
 
 const Stats = () => {
   const { blockchainInfo } = useGlobalContext()
-  const convertNum = (num: string) => {
-    return parseFloat(num).toPrecision(3).split('e+')
-  }
 
-  useResetBodyClass()
-
-  if (!blockchainInfo) {
+  if (blockchainInfo.blocks === -1) {
     return <Loading />
   }
 
-  const {
+  const { blocks, headers, difficulty, networkhashps, pooledtx, mediantime } =
+    blockchainInfo
+
+  const metrics = [
+    'blocks',
+    'headers',
+    '',
+    'difficulty',
+    'network hashes/sec',
+    'transactions waiting in mempool',
+    'blocks to next halving',
+    'est. date of next halving',
+  ]
+
+  const values = [
     blocks,
     headers,
-    bestblockhash,
-    difficulty,
-    networkhashps,
+    blocks === headers
+      ? 'Blockchain is fully synced ✅'
+      : 'Blockchain is still syncing...😎',
+    convertNum(difficulty as string),
+    convertNum(networkhashps as string),
     pooledtx,
-  } = blockchainInfo
+    (Math.floor(blocks / 210000) + 1) * 210000 - blocks,
+    moment()
+      .add(10 * ((Math.floor(blocks / 210000) + 1) * 210000 - blocks), 'm')
+      .format('MMM D YYYY'),
+  ]
+
+  const getHtml = (i: number) => {
+    return `<span class='text-4xl font-bold'>${values[i]}</span> ${metrics[i]}`
+  }
 
   return (
-    <main>
-      <div className='card-container'>
-        <div className='card'>
-          <p className='card-title'>
-            Current Block Height: {blocks}
-            <br />
-            Current Header Height: {headers}
-            <br />
-            {blocks === headers
-              ? 'Your blockchain is fully updated'
-              : 'Syncing your blockchain...'}
-          </p>
-
-          <BiCube className='card-icon' />
+    <section className='py-10'>
+      <div className='container mx-auto flex justify-center px-10'>
+        <div className='flex flex-col space-y-10'>
+          {metrics.map((m, i) => {
+            return (
+              <div
+                dangerouslySetInnerHTML={{ __html: getHtml(i) }}
+                key={i}
+              ></div>
+            )
+          })}
         </div>
-        {/* <div className='card'>
-          <p className='card-title'>Best Block Hash: {bestblockhash} </p>
-          <IoTicketSharp className='card-icon' />
-        </div> */}
-        <div className='card'>
-          <p className='card-title'>
-            Current Difficulty: {convertNum(difficulty as string)[0]} x 10
-            <sup>{convertNum(difficulty as string)[1]}</sup>
-            <br />
-            Hash Rate: {convertNum(networkhashps as string)[0]} x 10
-            <sup>{convertNum(networkhashps as string)[1]}</sup> H/s
-            <br />
-            No. of transactions waiting in pool: {pooledtx}
-          </p>
-          <GiMiner className='card-icon' />
-        </div>
-        {/* <div className='card'>
-          <p className='card-title'> All Softforks </p>
-          <CgGitFork className='card-icon' />
-        </div> */}
       </div>
-    </main>
+    </section>
   )
 }
 

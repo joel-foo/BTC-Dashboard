@@ -40,42 +40,40 @@ const FormLayout = () => {
   }, [error])
 
   return (
-    <>
-      <div className='form-container'>
-        <form>
-          <label htmlFor='blockHeight'>Search for Block: </label>
+    <section>
+      <div className='container mx-auto text-center text-xl pt-12 flex flex-col items-center gap-y-3'>
+        <form className='space-x-3'>
+          <label htmlFor='blockHeight'>Search for Block:</label>
           <input
-            className={error.show ? 'block-input error' : `block-input`}
+            className={`
+              ${
+                error.show && 'border-red-400'
+              } px-3 py-1 border-2 w-36 border-gray-300 rounded-sm focus:outline-none focus:border-gray-400`}
             type='text'
-            name='blockHeight'
-            id='blockHeight'
-            value={input}
             onChange={(e) => {
               setInput(e.target.value)
             }}
+            value={input}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
                 genericSubmitFn(e)
               }
             }}
           />
-
-          <button
-            type='button'
-            className='submit-btn'
-            onClick={(e) => {
-              genericSubmitFn(e)
-            }}
-          >
-            Submit
-          </button>
-          <div className='err-msg-container'>
-            <p className='err-msg'>{error.show && error.message}</p>
-          </div>
         </form>
+        <button
+          type='button'
+          className='text-white rounded-md w-20 bg-blue-500 px-2 py-1 text-base'
+          onClick={(e) => {
+            genericSubmitFn(e)
+          }}
+        >
+          Find it!
+        </button>
+        <p className='text-red-500 text-base'>{error.show && error.message}</p>
       </div>
       <Outlet />
-    </>
+    </section>
   )
 }
 

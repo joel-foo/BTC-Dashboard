@@ -1,25 +1,38 @@
-export const fetchIndividualBlock = async (bh: number) => {
+export interface indivBlockInfo {
+  info: { [key: string]: string | number; height: number; time: number }
+  stats: { [key: string]: string | number; subsidy: number }
+}
+
+export const fetchIndividualBlock = async (
+  bh: number,
+  abridged: boolean
+): Promise<indivBlockInfo> => {
   try {
     const [info, stats] = await Promise.all([
-      fetchBlockInfo(bh),
-      fetchBlockStats(bh),
+      fetchBlockInfo(bh, abridged),
+      fetchBlockStats(bh, abridged),
     ])
-    if (bh === 0) return { info }
-    return { info, stats, status: 200 }
+    return { info, stats }
   } catch (err) {
-    return { status: 404 }
+    throw new Error()
   }
 }
 
-const fetchBlockInfo = async (bh: number) => {
-  const res = await fetch(`http://localhost:3000/api/block/${bh}`)
+// export type returned = Awaited<Promise<ReturnType<typeof fetchIndividualBlock>>>
+
+const fetchBlockInfo = async (bh: number, abridged: boolean) => {
+  let url = `https://nakamotonode.com/api/block/${bh}`
+  if (abridged) url += '?q1=height&q2=hash&q3=time&q4=nTx&q5=difficulty'
+  const res = await fetch(url)
   const info = await res.json()
   return info
 }
 
-const fetchBlockStats = async (bh: number) => {
-  if (bh === 0) return null
-  const res = await fetch(`http://localhost:3000/api/blockstats/${bh}`)
+const fetchBlockStats = async (bh: number, abridged: boolean) => {
+  if (bh === 0) return {}
+  let url = `https://nakamotonode.com/api/blockstats/${bh}`
+  if (abridged) url += '?q1=avgfee&q2=avgfeerate&q3=subsidy'
+  const res = await fetch(url)
   const stats = await res.json()
   return stats
 }

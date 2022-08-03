@@ -57,6 +57,9 @@ password=$(awk -F"=" '$1=="rpcpassword" {print $2}' ${datadir}bitcoin.conf)
 echo "your username is:" $user
 echo "your password is:" $password
 
+#for client
+echo -e "REACT_APP_RPC_USER=$user" >> .env
+
 # Check if bitcoin core is already running. Stop it and re-run with server and daemon.
 echo "Starting bitcoin core now........."
 

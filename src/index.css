@@ -1,0 +1,43 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.loader {
+  width: 200px;
+  height: 200px;
+  border-radius: 9999px;
+  border: 16px solid rgba(147, 197, 253);
+  border-top-color: rgba(59, 130, 246);
+  animation: spin infinite linear 4s;
+}
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.new-left {
+  animation: 1s moveFromLeft linear forwards;
+}
+
+.new-right {
+  animation: 1s moveFromRight linear forwards;
+}
+
+@keyframes moveFromLeft {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+
+@keyframes moveFromRight {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}

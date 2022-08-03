@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, ReactNode } from 'react'
 
 interface ContextInterface {
-  blockchainInfo: { [key: string]: string | number; blocks: number }
+  blockchainInfo: { [key: string]: string | number | Object; blocks: number }
   wallets: string[] | null
   input: string | ''
   error: {
@@ -35,10 +35,12 @@ const AppProvider = ({ children }: { children: ReactNode }) => {
   const [startUpdate, setStartUpdate] = useState(false)
 
   async function fetchData() {
-    const res = await fetch('http://localhost:3000/api/blockchaininfo')
+    const res = await fetch('https://nakamotonode.com/api/blockchaininfo')
     const data = await res.json()
-    if (!startUpdate) setCurrentChainHeight(blockchainInfo.blocks)
-    setBlockchainInfo(data)
+    setBlockchainInfo((blockchainInfo) => {
+      if (!startUpdate) setCurrentChainHeight(blockchainInfo.blocks)
+      return data
+    })
   }
 
   useEffect(() => {

@@ -1,13 +1,13 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useGlobalContext } from '../../context'
 import { useParams, useNavigate } from 'react-router-dom'
 import moment from 'moment'
-import { VscArrowSwap } from 'react-icons/vsc'
 import Loading from '../pages/Loading'
 import { fetchIndividualBlock } from '../../fetchIndividualBlock'
+import ErrorPage from '../pages/ErrorPage'
 
 const IndividualBlock = () => {
-  const { id } = useParams()
+  const { id } = useParams() as { id: string }
   const navigate = useNavigate()
   const [blockInfo, setBlockInfo] = useState<any>(null)
   const { blockchainInfo, isSubmitted, setIsSubmitted, input, setInput } =
@@ -15,63 +15,46 @@ const IndividualBlock = () => {
   const [isPrev, setIsPrev] = useState(false)
   const [isNext, setIsNext] = useState(false)
   const [loading, setLoading] = useState(true)
-  const centerContainerRef = useRef<HTMLDivElement | null>(null)
-  const [error, setError] = useState({ show: false, msg: '' })
-  const [isRotate, setIsRotate] = useState(false)
-  const [isHide, setIsHide] = useState(false)
+  const [error, setError] = useState<{ show: boolean; msg?: string }>({
+    show: false,
+    msg: '',
+  })
 
-  const fetchBlockInfo = async (blockHeight: any) => {
+  const fetchBlockInfo = async (blockHeight: string) => {
     setLoading(true)
-    const { info, stats, status } = await fetchIndividualBlock(blockHeight)
-    if (status === 404) {
-      setError({ show: true, msg: 'Error!' })
-    } else {
+    try {
+      const { info, stats } = await fetchIndividualBlock(
+        parseInt(blockHeight),
+        false
+      )
       setBlockInfo({ info, stats })
+    } catch (e) {
+      setError({ show: true, msg: 'No such block!' })
     }
     setLoading(false)
   }
 
   useEffect(() => {
-    document.body.className = 'hide-overflow-y'
+    setError({ show: false })
+    fetchBlockInfo(id!)
   }, [id])
-
-  useEffect(() => {
-    fetchBlockInfo(id)
-  }, [])
 
   useEffect(() => {
     if (isSubmitted) {
       fetchBlockInfo(input)
       setIsSubmitted(false)
-      setInput('')
     }
     if (isPrev) {
       const prevBlock = parseInt(id as string) - 1
-      setIsHide(true)
       navigate(`/blockexplorer/blockheight=${prevBlock}`)
-      fetchBlockInfo(prevBlock)
+      // fetchBlockInfo(prevBlock)
       setIsPrev(false)
-      setIsRotate(false)
-      setTimeout(() => {
-        centerContainerRef.current!.className = 'center-container left'
-      }, 690)
-      setTimeout(() => {
-        setIsHide(false)
-      }, 1500)
     }
     if (isNext) {
       const nextBlock = parseInt(id as string) + 1
-      setIsHide(true)
       navigate(`/blockexplorer/blockheight=${nextBlock}`)
-      fetchBlockInfo(nextBlock)
+      // fetchBlockInfo(nextBlock)
       setIsNext(false)
-      setIsRotate(false)
-      setTimeout(() => {
-        centerContainerRef.current!.className = 'center-container right'
-      }, 690)
-      setTimeout(() => {
-        setIsHide(false)
-      }, 1500)
     }
   }, [isSubmitted, isNext, isPrev])
 
@@ -80,7 +63,7 @@ const IndividualBlock = () => {
   }
 
   if (error.show) {
-    return <h2>Error!: {error.msg}</h2>
+    return <ErrorPage msg={error.msg} />
   }
 
   const {
@@ -146,10 +129,10 @@ const IndividualBlock = () => {
     'Difficulty',
     'Chainwork',
     'No. of Transactions',
-    'Hash of Previous Block',
-    'Hash of Next Block',
-    'Average fee in block',
-    'Average fee rate (sats/byte)',
+    height !== 0 && 'Hash of Previous Block',
+    height !== blockchainInfo.blocks && 'Hash of Next Block',
+    height !== 0 && 'Average fee in block',
+    height !== 0 && 'Average fee rate (sats/byte)',
     'All Transaction Ids',
   ]
 
@@ -172,6 +155,7 @@ const IndividualBlock = () => {
     nextblockhash,
     avgfee,
     avgfeerate,
+    tx,
   ]
 
   const keysBack = [
@@ -179,13 +163,13 @@ const IndividualBlock = () => {
     'Feerates at the 10th',
     'Number of inputs (excluding coinbase)',
     'Max fee in block',
-    'Max fee rate (sats/virtual byte)',
+    'Max fee rate (sats/byte)',
     'Max transaction size',
     'Truncated median fee in block',
     'Truncated median transaction size',
     'Min fee in block',
-    'Min fee rate (sats/virtual byte)',
-    'Min transaciton size',
+    'Min fee rate (sats/byte)',
+    'Min transaction size',
     'Number of outputs',
     'Block subsidy',
     'Total size of all segwit transactions',
@@ -196,8 +180,8 @@ const IndividualBlock = () => {
     'Total weight of all  non-coinbase transactions',
     'Fee total',
     'Number of transactions (including coinbase)',
-    'Change in utxo number',
-    'Change in size for utxo index',
+    'Change in UTXO number',
+    'Change in size for UTXO index',
   ]
 
   const valuesBack = [
@@ -227,80 +211,54 @@ const IndividualBlock = () => {
   ]
 
   return (
-    <div className='center-container' ref={centerContainerRef}>
-      <div className='temp-block-container left2'></div>
-      <div
-        className='temp-block-container left'
-        onClick={() => height !== 0 && setIsPrev(true)}
-      ></div>
-      <div className='block-line'></div>
-      <div className={isRotate ? ' flip-block rotate' : 'flip-block'}>
-        {height !== 0 && (
-          <VscArrowSwap
-            className={isHide ? 'flip-icon hide' : 'flip-icon'}
-            onClick={() => setIsRotate(!isRotate)}
-          />
-        )}
-        <div className='flip-block-inner'>
-          <div className='flip-block-front'>
-            <div className={isHide ? 'keys-container hide' : 'keys-container'}>
-              {keysFront.map((k, i) => {
-                return (
-                  <span className='block-values' key={i}>
+    <section className='p-3'>
+      <div className='container mx-auto border-2 border-gray-200 rounded-b-md shadow-xl py-10 px-5'>
+        <div className='grid grid-cols-2 gap-y-6 md:w-3/4 mx-auto '>
+          {keysFront.map((k, i) => {
+            const value = valuesFront[i]
+            return (
+              <React.Fragment key={i}>
+                <span
+                  key={`k-${i}`}
+                  className='w-36 break-normal font-semibold md:w-auto'
+                >
+                  {k}
+                </span>
+                {i === keysFront.length - 1 ? (
+                  <textarea
+                    value={value}
+                    className='border-2 border-gray-200 p-3 rounded-md resize-none focus:outline-none'
+                    spellCheck='false'
+                    key={`v-${i}`}
+                    readOnly
+                  ></textarea>
+                ) : (
+                  <span key={`v-${i}`} className='break-all'>
+                    {value}
+                  </span>
+                )}
+              </React.Fragment>
+            )
+          })}
+          {height !== 0 &&
+            keysBack.map((k, i) => {
+              return (
+                <React.Fragment key={i}>
+                  <span
+                    key={`k2-${i}`}
+                    className='w-24 break-normal font-semibold md:w-auto'
+                  >
                     {k}
                   </span>
-                )
-              })}
-            </div>
-            <div
-              className={isHide ? 'values-container hide' : 'values-container'}
-            >
-              {valuesFront.map((v, i) => {
-                return (
-                  <span className='block-values' key={i}>
-                    {v}
+                  <span key={`v2-${i}`} className='break-all'>
+                    {valuesBack[i]}
                   </span>
-                )
-              })}
-              <textarea
-                id='transactions'
-                cols={30}
-                rows={6}
-                value={tx}
-                readOnly
-              ></textarea>
-            </div>
-          </div>
-          {height !== 0 && (
-            <div className='flip-block-back'>
-              <div className='keys-container back'>
-                {keysBack.map((k, i) => {
-                  return (
-                    <span className='block-values' key={i}>
-                      {k}
-                    </span>
-                  )
-                })}
-              </div>
-              <div className='values-container back'>
-                {valuesBack.map((v, i) => {
-                  return (
-                    <span className='block-values' key={i}>
-                      {v}
-                    </span>
-                  )
-                })}
-              </div>
-            </div>
-          )}
+                </React.Fragment>
+              )
+            })}
         </div>
       </div>
-      <div
-        className='temp-block-container right'
-        onClick={() => height !== blockchainInfo.blocks && setIsNext(true)}
-      ></div>
-      <div className='temp-block-container right2'></div>
-    </div>
+    </section>
   )
 }
 export default IndividualBlock

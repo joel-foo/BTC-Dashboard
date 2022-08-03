@@ -4,12 +4,9 @@ import Loading from '../pages/Loading'
 import moment from 'moment'
 import { useNavigate, useParams } from 'react-router-dom'
 import { fetchIndividualBlock } from '../../fetchIndividualBlock'
-
-type indivBlockInfo = {
-  info: { [key: string]: string | number; height: number; time: number }
-  stats: { [key: string]: string | number; subsidy: number }
-  status?: 200 | 404
-}
+import { convertNum } from '../../helpers'
+import ErrorPage from '../pages/ErrorPage'
+import { indivBlockInfo } from '../../fetchIndividualBlock'
 
 const BlockExplorer = () => {
   const navigate = useNavigate()
@@ -24,20 +21,12 @@ const BlockExplorer = () => {
   const [blocksInfo, setBlocksInfo] = useState<indivBlockInfo[]>([])
   const [page, setPage] = useState<number | null>(null)
   const [error, setError] = useState(false)
-  const [maxPage, setMaxPage] = useState<number | null>()
+  const [maxPage, setMaxPage] = useState<number | null>(null)
+  //this is for when the 20 blocks for the page has been retrieved, and we are looking whether to update the current blocksInfo state.
   const [isUpdating, setIsUpdating] = useState(false)
-
-  const fetchBlockInfo = async (bh: number, i: number) => {
-    try {
-      const { info, stats } = await fetchIndividualBlock(bh)
-      setBlocksInfo((blocksInfo) => {
-        blocksInfo[i] = { info, stats }
-        return blocksInfo
-      })
-    } catch (e) {
-      console.log(e)
-    }
-  }
+  //loading is when we are retrieving the 20 blocks itself
+  const [isLoading, setIsLoading] = useState(true)
+  const [diff, setDiff] = useState({ num: 0, active: false })
 
   const handleClick = (height: number) => {
     navigate(`/blockexplorer/blockheight=${height}`)
@@ -68,132 +57,145 @@ const BlockExplorer = () => {
       numBlocksToRetrieve = blockchainInfo.blocks - 20 * (maxPageNum - 1) + 1
     }
     const pageOffset = (page - 1) * 20
+    const promiseChain = []
     for (let i = 0; i < numBlocksToRetrieve; i++) {
-      fetchBlockInfo(blockchainInfo.blocks - pageOffset - i, i)
+      const p = fetchIndividualBlock(
+        blockchainInfo.blocks - pageOffset - i,
+        true
+      )
+      promiseChain.push(p)
     }
+    Promise.all(promiseChain).then((results) => {
+      setBlocksInfo(results)
+      setIsLoading(false)
+    })
+    //these don't need to wait for the promises to resolve
     setStartUpdate(false)
     setMaxPage(maxPageNum)
   }, [page])
 
   //fetch new blocks when no. of blocks in the chain change
   useEffect(() => {
-    if (
-      isUpdating ||
-      !(maxPage && page) ||
-      (page === maxPage &&
-        blocksInfo.length !== currentChainHeight - 20 * (maxPage - 1) + 1) ||
-      (page !== maxPage && blocksInfo.length !== 20)
-    )
-      return
+    //this hook only comes into play if we are not updating (whose state is itself controlled by this hook) and not loading (in other words, once we have finished retrieving the 20 blocks)
+    if (isUpdating || !(maxPage && page) || isLoading) return
     const diff = blockchainInfo.blocks - currentChainHeight
-    console.log(diff)
     const promiseChain = []
     //starts by returning the latest block first
     for (let i = diff, j = 20; i > 0 && j > 0; i--, j--) {
-      const p = fetchIndividualBlock(blocksInfo[0].info.height + i)
+      const p = fetchIndividualBlock(blocksInfo[0].info.height + i, true)
       promiseChain.push(p)
     }
     setStartUpdate(true)
     setIsUpdating(true)
     Promise.all(promiseChain).then((results) => {
-      const newResults: indivBlockInfo[] = []
-      for (const r of results) {
-        const { info, stats } = r
-        newResults.push({ info, stats })
-      }
       setBlocksInfo((blocksInfo) => {
-        blocksInfo = newResults.concat(blocksInfo)
+        blocksInfo = results.concat(blocksInfo)
         blocksInfo.splice(20, diff)
         return blocksInfo
       })
+      //only set these states once we are sure the promises are resolved
       setIsUpdating(false)
       setCurrentChainHeight(currentChainHeight + diff)
+      setDiff({ num: diff, active: true })
     })
   }, [blockchainInfo.blocks])
+
+  useEffect(() => {
+    //or use window.setTimeout to return a number:
+    let timeout: ReturnType<typeof setTimeout>
+    //clear timeout once animation completes
+    if (diff.active)
+      timeout = setTimeout(() => setDiff({ num: 0, active: false }), 1000)
+    return () => clearTimeout(timeout)
+  }, [diff.active])
 
   const getTimeDiff = (timestamp: number) => {
     return moment.unix(timestamp).fromNow()
   }
 
   if (error) {
-    return <h2>No such page!</h2>
+    return <ErrorPage msg='404 Page Not Found' />
   }
 
-  if (
-    !(maxPage && page) ||
-    (page === maxPage &&
-      blocksInfo.length !== blockchainInfo.blocks - 20 * (maxPage - 1) + 1) ||
-    (page !== maxPage && blocksInfo.length !== 20)
-  ) {
+  if (!(maxPage && page) || isLoading) {
     return <Loading />
   }
 
   return (
-    <div className='block-exp-container'>
-      {[...Array(20).keys()].map((i) => {
-        if (!blocksInfo[i]) {
-          return <div key={i}></div>
-        } else {
-          let avgfee, subsidy
-          const { height, hash, time, difficulty, nTx } = blocksInfo[i].info
+    <section className='px-2'>
+      <div className='container mx-auto flex flex-col items-center py-6 gap-y-6'>
+        {[...Array(20).keys()].map((i) => {
+          let avgfee, subsidy, avgfeerate
+          const { height, hash, time, nTx, difficulty } = blocksInfo[i].info
           if (height !== 0) {
             avgfee = blocksInfo[i].stats['avgfee']
+            avgfeerate = blocksInfo[i].stats['avgfeerate']
             subsidy = blocksInfo[i].stats['subsidy']
           }
           return (
-            <div className='block-exp-main-container' key={i}>
-              <div className='block-exp-individual-block-container'>
-                <div className='block-title'>
-                  Block {height}
-                  <span id='block-time'>{getTimeDiff(time)}</span>
-                </div>
-                <div className='block-info'>
-                  <p>Hash: {hash} </p>
-                  <p>Difficulty: {difficulty}</p>
-                  <p>nTx: {nTx}</p>
-                  {height !== 0 && (
-                    <p>
-                      {avgfee}, {(subsidy as number) / Math.pow(10, 8)} BTC
-                    </p>
-                  )}
-                </div>
-                <button
-                  className='submit-btn'
-                  onClick={() => handleClick(height)}
-                >
-                  See More
-                </button>
-              </div>
-              <img
-                className='chain-icon'
-                src='/images/Chain_link_icon.svg'
-                alt=''
-              />
-            </div>
-          )
-        }
-      })}
-      <div className='nav-page-container'>
-        {[...Array(10).keys()].map((i) => {
-          const pagenum = page! + i
-          if (pagenum > maxPage!) {
-            return <div key={i}></div>
-          }
-          return (
             <div
-              className='nav-btn'
-              onClick={() => {
-                navigate(`/blockexplorer/page=${pagenum}`)
-                navigate(0)
-              }}
+              className={`relative flex flex-col border-2 border-gray-200 shadow-xl p-10 rounded-md w-full md:max-w-2xl break-all ${
+                diff.active &&
+                i <= diff.num - 1 &&
+                (i % 2 === 0 ? 'new-left' : 'new-right')
+              }`}
               key={i}
             >
-              {pagenum}
+              <h1 className='text-xl font-bold relative md:text-2xl'>
+                Block {height}
+              </h1>
+              <h2>Hash: {hash}</h2>
+              <h2
+                dangerouslySetInnerHTML={{
+                  __html: `Difficulty: ${convertNum(difficulty as string)}`,
+                }}
+              ></h2>
+              {height !== 0 && (
+                <>
+                  <h2>Average fee: {avgfee} sats</h2>
+                  <h2>Average fee rate: {avgfeerate} sats/byte</h2>
+                  <h2>
+                    Block subsidy: {(subsidy as number) / Math.pow(10, 8)} BTC
+                  </h2>
+                </>
+              )}
+              <h2> nTx: {nTx} </h2>
+              <h1 className='absolute right-10 top-11 '>{getTimeDiff(time)}</h1>
+              <button
+                className='rounded-md px-3 py-1 text-white bg-blue-500 w-24'
+                onClick={() => handleClick(height)}
+              >
+                See More
+              </button>
+              {i !== 19 && (
+                <img
+                  className='absolute -bottom-7 left-1/2 w-8 transform rotate-90'
+                  src='/images/Chain_link_icon.svg'
+                  alt=''
+                />
+              )}
             </div>
           )
         })}
+        <div className='flex gap-4 flex-wrap justify-center items-center'>
+          {[...Array(10).keys()].map((i) => {
+            const pagenum = Math.min(Math.max(page - 4, 1), maxPage - 9)
+            return (
+              <div
+                className='bg-blue-400 text-white px-3 py-1 rounded-md hover:cursor-pointer'
+                onClick={() => {
+                  navigate(`/blockexplorer/page=${pagenum + i}`)
+                  navigate(0)
+                }}
+                key={i}
+              >
+                {pagenum + i}
+              </div>
+            )
+          })}
+        </div>
       </div>
-    </div>
+    </section>
   )
 }
 

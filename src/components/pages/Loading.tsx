@@ -1,10 +1,7 @@
-import React from 'react'
-import { useResetBodyClass } from '../custom hooks/useResetBodyClass'
-
 const Loading = () => {
-  useResetBodyClass()
   return (
-    <div className='loading'>
+    <div className='container mx-auto flex flex-col items-center gap-y-6 py-20'>
+      <h1 className='text-2xl'>Processing blocks...</h1>
       <div className='loader'></div>
     </div>
   )
