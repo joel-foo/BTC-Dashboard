@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useGlobalContext } from '../../context'
 import Loading from '../pages/Loading'
 import moment from 'moment'
@@ -70,8 +70,8 @@ const BlockExplorer = () => {
       setIsLoading(false)
     })
     //these don't need to wait for the promises to resolve
-    setStartUpdate(false)
     setMaxPage(maxPageNum)
+    setStartUpdate(false)
   }, [page])
 
   //fetch new blocks when no. of blocks in the chain change
@@ -123,7 +123,7 @@ const BlockExplorer = () => {
 
   return (
     <section className='px-3'>
-      <div className='container mx-auto flex flex-col items-center py-6 gap-y-6'>
+      <div className='container mx-auto flex flex-col items-center gap-y-6'>
         {[...Array(20).keys()].map((i) => {
           let avgfee, subsidy, avgfeerate
           const { height, hash, time, nTx, difficulty } = blocksInfo[i].info
@@ -134,7 +134,7 @@ const BlockExplorer = () => {
           }
           return (
             <div
-              className={`relative flex flex-col border-2 border-gray-100 shadow-xl p-10 rounded-md w-full gap-y-2 md:max-w-2xl break-all ${
+              className={`relative flex flex-col border-2 border-gray-200 border-t-[1px] shadow-xl p-10 rounded-md w-full gap-y-2 md:max-w-2xl break-all ${
                 diff.active &&
                 i <= diff.num - 1 &&
                 (i % 2 === 0 ? 'new-left' : 'new-right')
@@ -179,7 +179,7 @@ const BlockExplorer = () => {
             </div>
           )
         })}
-        <div className='flex gap-4 flex-wrap justify-center items-center'>
+        <div className='flex gap-4 flex-wrap justify-center items-center mt-3 mb-8'>
           {[...Array(10).keys()].map((i) => {
             const pagenum = Math.min(Math.max(page - 4, 1), maxPage - 9)
             return (
@@ -188,6 +188,7 @@ const BlockExplorer = () => {
                 onClick={() => {
                   navigate(`/blockexplorer/page=${pagenum + i}`)
                   navigate(0)
+                  setIsLoading(true)
                 }}
                 key={i}
               >

@@ -1,7 +1,9 @@
-import { Outlet, Link } from 'react-router-dom'
+import { Outlet, Link, useNavigate } from 'react-router-dom'
 import { FaBitcoin } from 'react-icons/fa'
 
 const Layout = () => {
+  const navigate = useNavigate()
+
   return (
     <main>
       <section className='bg-blue-100 relative'>
@@ -14,8 +16,16 @@ const Layout = () => {
               <li className='hover:underline underline-offset-4'>
                 <Link to='/stats'>stats</Link>
               </li>
-              <li className='hover:underline underline-offset-4'>
-                <Link to='/blockexplorer/page=1'>block explorer</Link>
+              <li className=''>
+                <button
+                  onClick={() => {
+                    navigate('/blockexplorer/page=1')
+                    navigate(0)
+                  }}
+                  className='hover:underline underline-offset-4'
+                >
+                  block explorer
+                </button>
               </li>
             </ul>
           </nav>

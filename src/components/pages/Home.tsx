@@ -4,6 +4,17 @@ import { IoStatsChartSharp } from 'react-icons/io5'
 import { useGlobalContext } from '../../context'
 import Loading from './Loading'
 
+const splitNum = (num: number) => {
+  const str = JSON.stringify(num)
+  return str
+    .split('')
+    .map((d, i) => {
+      if ((i + 1) % 3 === 0 && i !== str.length - 1) return `${d},`
+      return d
+    })
+    .join('')
+}
+
 const Home = () => {
   const { blockchainInfo } = useGlobalContext()
   if (blockchainInfo.blocks === -1) {
@@ -11,9 +22,11 @@ const Home = () => {
   }
   return (
     <section className='px-3 '>
-      <div className='container mx-auto flex flex-col gap-y-12 text-3xl items-center py-10 md:text-4xl md:pt-20'>
+      <div className='container mx-auto flex flex-col gap-y-12 text-3xl items-center py-8 md:text-4xl md:pt-20'>
         <div className='flex flex-col gap-y-3 text-center'>
-          <h1 className='text-6xl font-bold'> {blockchainInfo.blocks} </h1>
+          <h1 className='text-6xl font-bold'>
+            {splitNum(blockchainInfo.blocks)}
+          </h1>
           <span>blocks and counting...</span>
         </div>
         <div className='flex flex-col gap-y-3 md:flex-row md:gap-y-0 md:space-x-3 md:min-h-[400px] justify-center'>
