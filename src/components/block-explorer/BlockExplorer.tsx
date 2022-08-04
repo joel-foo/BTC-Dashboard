@@ -134,7 +134,7 @@ const BlockExplorer = () => {
           }
           return (
             <div
-              className={`relative flex flex-col border-2 border-gray-200 shadow-xl p-10 rounded-md w-full md:max-w-2xl break-all ${
+              className={`relative flex flex-col border-2 border-gray-200 shadow-xl p-10 rounded-md w-full gap-y-2 md:max-w-2xl break-all ${
                 diff.active &&
                 i <= diff.num - 1 &&
                 (i % 2 === 0 ? 'new-left' : 'new-right')
@@ -144,25 +144,27 @@ const BlockExplorer = () => {
               <h1 className='text-xl font-bold relative md:text-2xl'>
                 Block {height}
               </h1>
-              <h2>Hash: {hash}</h2>
-              <h2
-                dangerouslySetInnerHTML={{
-                  __html: `Difficulty: ${convertNum(difficulty as string)}`,
-                }}
-              ></h2>
-              {height !== 0 && (
-                <>
-                  <h2>Average fee: {avgfee} sats</h2>
-                  <h2>Average fee rate: {avgfeerate} sats/byte</h2>
-                  <h2>
-                    Block subsidy: {(subsidy as number) / Math.pow(10, 8)} BTC
-                  </h2>
-                </>
-              )}
-              <h2> nTx: {nTx} </h2>
+              <div>
+                <h2>Hash: {hash}</h2>
+                <h2
+                  dangerouslySetInnerHTML={{
+                    __html: `Difficulty: ${convertNum(difficulty as string)}`,
+                  }}
+                ></h2>
+                {height !== 0 && (
+                  <>
+                    <h2>Average fee: {avgfee} sats</h2>
+                    <h2>Average fee rate: {avgfeerate} sats/byte</h2>
+                    <h2>
+                      Block subsidy: {(subsidy as number) / Math.pow(10, 8)} BTC
+                    </h2>
+                  </>
+                )}
+                <h2> No. of Transactions: {nTx} </h2>
+              </div>
               <h1 className='absolute right-10 top-11 '>{getTimeDiff(time)}</h1>
               <button
-                className='rounded-md px-3 py-1 text-white bg-blue-500 w-24'
+                className='rounded-md px-3 py-1 text-white bg-blue-500 w-24 self-end'
                 onClick={() => handleClick(height)}
               >
                 See More
