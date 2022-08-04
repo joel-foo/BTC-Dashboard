@@ -41,7 +41,7 @@ const FormLayout = () => {
 
   return (
     <section>
-      <div className='container mx-auto text-center text-xl pt-10 flex flex-col items-center gap-y-3'>
+      <div className='container mx-auto text-center text-xl pt-10 flex flex-col items-center gap-y-5'>
         <form className='space-x-3'>
           <label htmlFor='blockHeight'>Search for Block:</label>
           <input
@@ -63,7 +63,7 @@ const FormLayout = () => {
         </form>
         <button
           type='button'
-          className='text-white rounded-md w-20 bg-blue-500 px-2 py-1 text-base'
+          className='text-white rounded-md w-20 bg-blue-500 py-1 text-base'
           onClick={(e) => {
             genericSubmitFn(e)
           }}

@@ -122,7 +122,7 @@ const BlockExplorer = () => {
   }
 
   return (
-    <section className='px-2'>
+    <section className='px-3'>
       <div className='container mx-auto flex flex-col items-center py-6 gap-y-6'>
         {[...Array(20).keys()].map((i) => {
           let avgfee, subsidy, avgfeerate
@@ -134,7 +134,7 @@ const BlockExplorer = () => {
           }
           return (
             <div
-              className={`relative flex flex-col border-2 border-gray-200 shadow-xl p-10 rounded-md w-full gap-y-2 md:max-w-2xl break-all ${
+              className={`relative flex flex-col border-2 border-gray-100 shadow-xl p-10 rounded-md w-full gap-y-2 md:max-w-2xl break-all ${
                 diff.active &&
                 i <= diff.num - 1 &&
                 (i % 2 === 0 ? 'new-left' : 'new-right')
@@ -171,7 +171,7 @@ const BlockExplorer = () => {
               </button>
               {i !== 19 && (
                 <img
-                  className='absolute -bottom-7 left-1/2 w-8 transform rotate-90'
+                  className='absolute -bottom-7 left-1/2 w-8 transform rotate-90 -translate-x-1/2'
                   src='/images/Chain_link_icon.svg'
                   alt=''
                 />

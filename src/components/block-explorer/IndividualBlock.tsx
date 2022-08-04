@@ -211,7 +211,7 @@ const IndividualBlock = () => {
   ]
 
   return (
-    <section className='p-3'>
+    <section className='px-3'>
       <div className='container mx-auto border-2 border-gray-200 rounded-b-md shadow-xl py-10 px-5 md:max-w-3xl md:px-10'>
         <div className='grid grid-cols-2 gap-y-6'>
           {keysFront.map((k, i) => {

@@ -41,13 +41,13 @@ const Stats = () => {
   ]
 
   const getHtml = (i: number) => {
-    return `<span class='text-4xl font-bold'>${values[i]}</span> ${metrics[i]}`
+    return `<span class='text-4xl font-bold'>${values[i]}</span><br> ${metrics[i]}`
   }
 
   return (
-    <section className='pt-10 md:pt-20'>
-      <div className='container mx-auto flex justify-center px-10'>
-        <div className='flex flex-col space-y-10'>
+    <section className='px-3'>
+      <div className='container mx-auto flex justify-center py-5'>
+        <div className='flex flex-col space-y-10 bg-blue-500 text-white rounded-md shadow-md px-8 py-10'>
           {metrics.map((m, i) => {
             return (
               <div
