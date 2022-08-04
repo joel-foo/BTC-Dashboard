@@ -41,7 +41,7 @@ const FormLayout = () => {
 
   return (
     <section>
-      <div className='container mx-auto text-center text-xl pt-12 flex flex-col items-center gap-y-3'>
+      <div className='container mx-auto text-center text-xl pt-10 flex flex-col items-center gap-y-3'>
         <form className='space-x-3'>
           <label htmlFor='blockHeight'>Search for Block:</label>
           <input

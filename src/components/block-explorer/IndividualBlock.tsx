@@ -212,15 +212,15 @@ const IndividualBlock = () => {
 
   return (
     <section className='p-3'>
-      <div className='container mx-auto border-2 border-gray-200 rounded-b-md shadow-xl py-10 px-5'>
-        <div className='grid grid-cols-2 gap-y-6 md:w-3/4 mx-auto '>
+      <div className='container mx-auto border-2 border-gray-200 rounded-b-md shadow-xl py-10 px-5 md:max-w-3xl md:px-10'>
+        <div className='grid grid-cols-2 gap-y-6'>
           {keysFront.map((k, i) => {
             const value = valuesFront[i]
             return (
               <React.Fragment key={i}>
                 <span
                   key={`k-${i}`}
-                  className='w-36 break-normal font-semibold md:w-auto'
+                  className='w-36 break-normal pr-1 font-semibold md:w-auto'
                 >
                   {k}
                 </span>

@@ -45,7 +45,7 @@ const Stats = () => {
   }
 
   return (
-    <section className='py-10'>
+    <section className='pt-10 md:pt-20'>
       <div className='container mx-auto flex justify-center px-10'>
         <div className='flex flex-col space-y-10'>
           {metrics.map((m, i) => {
