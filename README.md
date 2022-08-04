@@ -2,7 +2,7 @@
 
 This dashboard uses nakamotonode (see: https://github.com/joel-foo/nakamoto-node) as its API which will run on localhost:3000.
 
-The aim is to build a block explorer based on your full node, without relying on external block explorers such as blockchain.com or blockstream.info.
+The aim is to build a block explorer based on your full node, reducing reliance on external block explorers such as blockchain.com or blockstream.info which often track your IP addresses as well as the addresses you are interested in.
 
 The dashboard itself will be available at localhost:8080.
 
@@ -18,29 +18,22 @@ The dashboard itself will be available at localhost:8080.
 
 Prerequisities:
 
-- Bitcoin full node
+- Bitcoin full node (approximately 490GB of disk space at time of writing)
 - Git
 - NodeJS
 
-# If you have not configured bitcoin.conf (or have no idea what this means):
+## If you have not configured bitcoin.conf (or have no idea what this means):
 
-1. Open a text editor/notepad and add the following:
+1. Open a text editor/notepad and add your desired username and password:
 
-   rpcuser=user
+   rpcuser={your username}
 
-   rpcpassword=password
+   rpcpassword=password={your password}
+
+   #only required if you want to use certain commands, check out nakamotonode.com to learn more
+   txindex=1
 
 Save the file as **bitcoin.conf**.
-
-Sample bitcoin.conf:
-server=1
-listen=1
-rpcuser=user
-rpcpassword=password
-txindex=1
-datadir=/mnt/bitcoin
-zmqpubrawblock=tcp://127.0.0.1:28332
-zmqpubrawtx=tcp://127.0.0.1:28333
 
 2. Depending on your OS, navigate to the respective default Bitcoin directory as follows:
 
