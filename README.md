@@ -1,5 +1,7 @@
 # Your personal Bitcoin Core Dashboard
 
+# Watch the blocks come in with your personal block explorer!
+
 This dashboard uses nakamotonode (see: https://github.com/joel-foo/nakamoto-node) as its API which will run on localhost:3000.
 
 With self-sufficiency in mind, the aim is to build a block explorer based on your full node, without relying on any external block explorers or API services such as blockchain.com or blockstream.info which often track your IP addresses as well as the addresses you are interested in.
