@@ -1,6 +1,8 @@
 # Your personal Bitcoin Core Dashboard
 
-# Watch the blocks come in with your personal block explorer!
+# Watch the blocks come in with your personal block explorer LIVE!
+
+The block explorer is updated as your node is synced - there is no need to refresh the page!
 
 This dashboard uses nakamotonode (see: https://github.com/joel-foo/nakamoto-node) as its API which will run on localhost:3000.
 
