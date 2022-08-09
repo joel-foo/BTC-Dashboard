@@ -1,6 +1,6 @@
-# Your personal Bitcoin Core Dashboard
+## Bitcoin Core Dashboard
 
-# Watch the blocks come in with your personal block explorer LIVE!
+## Watch the blocks come in with your personal block explorer LIVE!
 
 The block explorer is updated as your node is synced - there is no need to refresh the page!
 
